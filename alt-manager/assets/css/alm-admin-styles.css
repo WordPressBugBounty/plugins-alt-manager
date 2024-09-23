@@ -1,0 +1,38 @@
+.alm-heading span.dashicons.dashicons-images-alt2 {
+    vertical-align: middle;
+    padding: 5px;
+}
+.fs-full-size-wrapper {
+    margin: 0;
+}
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    width: 100%;
+    opacity: 0;
+}
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+    background: rgb(241 241 241 / 49%)!important;
+    opacity: 1;
+
+}
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    padding-left: 5px;
+}
+.select2-container--default .select2-search--inline {
+    position: absolute;
+    left: 0;
+    right: auto;
+}
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: #25ba9a!important;
+    color: #fff;
+}
+
+.settings_page_alt-manager input#reset {
+    background: #25ba9a;
+    border-color: #ffffff;
+    font-weight: 500;
+}
+.settings_page_alt-manager input#reset:focus {
+    box-shadow: 0 0 0 1px #fff, 0 0 0 3px #25ba9a;
+}
+

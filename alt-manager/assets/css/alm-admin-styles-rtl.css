@@ -1,0 +1,14 @@
+.fs-secure-notice {
+    right: 160px;
+    left: 0;
+}
+.select2-container .select2-search--inline {
+    position: absolute;
+    right: 0;
+    left: auto;
+}
+.select2-container--default .select2-search--inline {
+    position: absolute;
+    left: auto!important;
+    right: 0!important;
+}
