@@ -101,7 +101,7 @@ Alt Manager automatically and dynamically bulk change WordPress images alt text 
 <h3>WPSAAD Pro WordPress Plugins</h3>
 <ul>
  	<li><a href="https://wpsaad.com/alt-manager-wordpress-image-alt-text-plugin/">WordPress Images Alt Manager</a></li>
- 	<li><a href="https://wpsaad.com/custom-product-type-for-woocommerce/">WooCommerce Custom Produdct Type</a></li>
+ 	<li><a href="https://wpsaad.com/woocommerce-custom-product-type/">WooCommerce Custom Produdct Type</a></li>
  	<li><a href="https://wpsaad.com/shipping-manager-for-woocommerce/">WooCommerce Shipping Manager</a></li>
 </ul>
 
