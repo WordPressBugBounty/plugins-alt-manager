@@ -3,9 +3,9 @@ Contributors: wpsaad, arabianmido, freemius
 Tags: alt, alt text, , alt tag, seo, Google images
 
 Requires at least: 2.8.0
-Tested up to: 6.6
+Tested up to: 6.7
 Requires PHP: 5.2.4
-Stable tag: 1.6.3
+Stable tag: 1.6.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -161,3 +161,5 @@ Make sure you are inspecting image element not a background image.
 * Fixed CSRF.
 = 1.6.3 =
 * Fixed save and reset buttons.
+= 1.6.4 =
+* Performance optiomization.
