@@ -1,6 +1,6 @@
 === Alt Manager ===
 Contributors: wpsaad, arabianmido, freemius
-Tags: alt, alt text, , alt tag, seo, Google images
+Tags: alt text, image alt text, image alt, images seo, google images
 
 Requires at least: 2.8.0
 Tested up to: 6.7
