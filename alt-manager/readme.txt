@@ -1,11 +1,11 @@
-=== Image Alt Text Manager – Bulk & Dynamic Alt Tags For image SEO Optomization + AI ===
+=== Image Alt Text Manager – Bulk & Dynamic Alt Tags For image SEO Optimization + AI ===
 Contributors: wpsaad, arabianmido, freemius
 Tags: image alt text, image alt, images seo, google images, ai
 
 Requires at least: 2.8.0
 Tested up to: 6.8
 Requires PHP: 5.2.4
-Stable tag: 1.6.7
+Stable tag: 1.6.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -29,8 +29,8 @@ Automatically bulk change images alt text to dynamic alt tags values related to 
 </blockquote>
 <p><strong>Plugin Features</strong></p>
 <ul>
-<li>Bulk generate images alt tags from dynamic values related to (post - page - product- media).</li>
-<li>Bulk generate images title tags (post - page - product- media).</li>
+<li>Bulk generate images alt tags from dynamic values related to (post - page - product- custom post type).</li>
+<li>Bulk generate images title tags (post - page - product- custom post type).</li>
 <li>Optionally generate only images empty alt tags.</li>
 <li>Optionally generate only images empty title tags.</li>
 <li>AI-powered generation of context-aware alt text for images using the ChatGPT API (Premium).</li>
@@ -96,19 +96,19 @@ Automatically bulk change images alt text to dynamic alt tags values related to 
 
 <h3>WPSAAD Free WordPress Plugins</h3>
 <ul>
- 	<li><a href="https://wordpress.org/plugins/alt-manager/">WordPress Images Image Alt Text Manager</a></li>
+ 	<li><a href="https://wordpress.org/plugins/alt-manager/">WordPress Images Alt Manager</a></li>
  	<li><a href="https://wordpress.org/plugins/custom-product-type-for-woocommerce/">WooCommerce Custom Produdct Type</a></li>
  	<li><a href="https://wordpress.org/plugins/shipping-manager-for-woocommerce/">WooCommerce Shipping Manager</a></li>
-<li><a href="https://wordpress.org/plugins/wpsaad-addons-for-dokan-and-elementor/">WPSAAD Addons for Dokan and Elementor
-</a></li>
+	<li><a href="https://wordpress.org/plugins/wpsaad-addons-for-dokan-and-elementor/">Addons For Dokan And Elementor</a></li>
+	<li><a href="https://wordpress.org/plugins/bulk-wholsale-dynamic-pricing-buttons-for-woocommerce/">Bulk Wholesale Dynamic Pricing Buttons</a></li>
 </ul>
 <h3>WPSAAD Pro WordPress Plugins</h3>
 <ul>
- 	<li><a href="https://wpsaad.com/product/alt-manager/">WordPress Images Image Alt Text Manager</a></li>
+ 	<li><a href="https://wpsaad.com/product/image-alt-text-manager-wordpress-plugin-for-images-seo/">WordPress Images Alt Manager</a></li>
  	<li><a href="https://wpsaad.com/product/custom-product-type-for-woocommerce/">WooCommerce Custom Produdct Type</a></li>
  	<li><a href="https://wpsaad.com/product/shipping-manager-for-woocommerce/">WooCommerce Shipping Manager</a></li>
-<li><a href="https://wpsaad.com/product/wpsaad-addons-for-dokan-and-elementor/">WPSAAD Addons for Dokan and Elementor
-</a></li>
+	<li><a href="https://wpsaad.com/product/wpsaad-addons-for-dokan-and-elementor/">Addons For Dokan And Elementor</a></li>
+	<li><a href="https://wpsaad.com/product/bulk-wholesale-dynamic-pricing-buttons-for-woocommerce/">Bulk Wholesale Dynamic Pricing Buttons</a></li>
 </ul>
 
 == Installation ==
@@ -134,38 +134,43 @@ Make sure you are inspecting image element not a background image.
 </dl>
 
 == Screenshots ==
-1. Image Alt Text Manager Admin settings
+1. Dynamic Images Alt & Title Settings
+2. OpenAI API Settings
+3. AI Images Alt & Title Tab
 
 == Changelog ==
-= 1.3.0 =
-* Fixed empty alt and title.
-* Added homepage latest posts default settings.
+= 1.6.8 =
+* Hight Performance Optomization.
+* Added Feature Image Detection For High SEO Performance
+= 1.6.7 =
+* AI Feature added.
+= 1.6.3 =
+* Fixed save and reset buttons.
+= 1.6.2 =
+* Fixed CSRF.
+= 1.6.1 =
+* Fixed POC.
+= 1.5.9 =
+* Fixed PRO admin style
+= 1.5.7 =
+* Fixed WPML flag alt.
+= 1.5.6 =
+* Alt generattion technics imporovments.
+* Set alt from original posts first.
+* Added WPML flag Alt text compatibility.
+= 1.5.0 =
+* Added Generate Only Empty Alt Tags.
+* Added Generate Only Empty Title Tags.
+= 1.4.5 =
+* Fixed attachment caption.
+= 1.4.3 =
+* Fixed admin multiselect issue.
+* Fixed Beaver Builder conflict.
 = 1.4.0 =
 * Fixed cache bug.
 * added multiselect options.
 * added image attachment values to options.
 * added Site Description to supported values.
-= 1.4.3 =
-* Fixed admin multiselect issue.
-* Fixed Beaver Builder conflict.
-= 1.4.5 =
-* Fixed attachment caption.
-= 1.5.0 =
-* Added Generate Only Empty Alt Tags.
-* Added Generate Only Empty Title Tags.
-= 1.5.6 =
-* Alt generattion technics imporovments.
-* Set alt from original posts first.
-* Added WPML flag Alt text compatibility.
-= 1.5.7 =
-* Fixed WPML flag alt.
-= 1.5.9 =
-* Fixed PRO admin style
-= 1.6.1 =
-* Fixed POC.
-= 1.6.2 =
-* Fixed CSRF.
-= 1.6.3 =
-* Fixed save and reset buttons.
-= 1.6.7 =
-* AI Feature added.
+= 1.3.0 =
+* Fixed empty alt and title.
+* Added homepage latest posts default settings.

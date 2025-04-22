@@ -22,7 +22,7 @@ if ( !function_exists( 'alm_image_attributes' ) ) {
             'Site Description' => get_bloginfo( 'description' ),
             'Page Title'       => get_the_title( $ID ),
             'Post Title'       => get_post_field( 'post_title', $ID ),
-            'Product Title'    => get_post_field( 'post_title', $parent ),
+            'Product Title'    => get_post_field( 'post_title', $ID ),
         ];
         //wp image attachment data
         if ( wp_attachment_is_image( $attachment->ID ) ) {
@@ -124,7 +124,7 @@ if ( !function_exists( 'alm_image_attributes' ) ) {
             }
         }
         //check post type
-        if ( $type != 'product' && is_single( $ID ) || $type == 'post' ) {
+        if ( is_single( $ID ) && $type == 'post' ) {
             $alt = '';
             $title = '';
             // var_dump(get_option('post_images_alt'));

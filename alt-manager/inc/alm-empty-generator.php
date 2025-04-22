@@ -15,36 +15,35 @@ class alm_dom_generator {
     }
 
     // retrieves the attachment ID from the file URL
-    function alm_get_image_id( $url ) {
-        $attachment_id = 0;
+    function alm_is_featured( $url, $option = '' ) {
+        // Check if the URL is empty
+        if ( empty( $url ) ) {
+            return false;
+        }
         $dir = wp_upload_dir();
-        if ( false !== strpos( $url, $dir['baseurl'] . '/' ) ) {
-            // Is URL in uploads directory?
-            $file = basename( $url );
-            $query_args = array(
-                'post_type'   => 'attachment',
-                'post_status' => 'inherit',
-                'fields'      => 'ids',
-                'meta_query'  => array(array(
-                    'value'   => $file,
-                    'compare' => 'LIKE',
-                    'key'     => '_wp_attachment_metadata',
-                )),
-            );
-            $query = new WP_Query($query_args);
-            if ( $query->have_posts() ) {
-                foreach ( $query->posts as $post_id ) {
-                    $meta = wp_get_attachment_metadata( $post_id );
-                    $original_file = basename( $meta['file'] );
-                    $cropped_image_files = wp_list_pluck( $meta['sizes'], 'file' );
-                    if ( $original_file === $file || in_array( $file, $cropped_image_files ) ) {
-                        $attachment_id = $post_id;
-                        break;
+        switch ( $option ) {
+            case 'ID':
+                // Attempt to get attachment ID from URL
+                $attachment_id = ( function_exists( 'attachment_url_to_postid' ) ? attachment_url_to_postid( $url ) : url_to_postid( $url ) );
+                if ( !$attachment_id ) {
+                    // Remove size from filename (e.g., -150x150)
+                    $url = preg_replace( '/-\\d+x\\d+(?=\\.(jpg|jpeg|png|gif)$)/i', '', $url );
+                    $attachment_id = attachment_url_to_postid( $url );
+                }
+                return ( $attachment_id ? $attachment_id : false );
+            default:
+                // Check if URL is a post thumbnail
+                global $post;
+                if ( $post ) {
+                    $thumbnail_id = get_post_thumbnail_id( $post->ID );
+                    $thumbnail_url = wp_get_attachment_url( $thumbnail_id );
+                    if ( $thumbnail_url === $url ) {
+                        return true;
                     }
                 }
-            }
+                return false;
         }
-        return $attachment_id;
+        return false;
     }
 
     function alm_init() {
@@ -56,19 +55,6 @@ class alm_dom_generator {
         }
 
         ob_start( 'get_content' );
-    }
-
-    function alm_posts_attachments_ids() {
-        $args = array(
-            'fields'         => 'ids',
-            'posts_per_page' => -1,
-        );
-        $post_ids = get_posts( $args );
-        $found = [];
-        foreach ( $post_ids as $id ) {
-            $found[] = get_post_thumbnail_id( $id );
-        }
-        return $found;
     }
 
     function alm_generator( $alm_data_generator ) {
@@ -96,8 +82,7 @@ class alm_dom_generator {
         if ( is_singular( $types ) && !is_admin() && !empty( $alm_data_generator ) ) {
             // print_r($alm_data_generator);
             foreach ( $html->find( 'img' ) as $img ) {
-                $attachments_ids = $this->alm_posts_attachments_ids();
-                $attachment_id = $this->alm_get_image_id( $img->getAttribute( 'src' ) );
+                $is_image_featured = $this->alm_is_featured( $img->getAttribute( 'src' ) );
                 //WPML Compatibility Custom Alt
                 if ( $img->getAttribute( 'class' ) == 'wpml-ls-flag' ) {
                     $next_sibling = $img->next_sibling();
@@ -105,9 +90,9 @@ class alm_dom_generator {
                         $img->setAttribute( 'alt', $next_sibling->innertext() );
                     }
                 }
-                if ( !in_array( $attachment_id, $attachments_ids ) && $img->getAttribute( 'class' ) !== 'wpml-ls-flag' || empty( $img->getAttribute( 'alt' ) ) ) {
-                    $attachment_id = $this->alm_get_image_id( $img->getAttribute( 'src' ) );
-                    $parent = get_post_field( 'post_parent', $attachment_id );
+                if ( $is_image_featured && $img->getAttribute( 'class' ) !== 'wpml-ls-flag' || empty( $img->getAttribute( 'alt' ) ) ) {
+                    $attachment_id = $this->alm_is_featured( $img->getAttribute( 'src' ), 'ID' );
+                    // $parent = get_post_field('post_parent', $attachment_id);
                     // options
                     $options = [
                         'Site Name'        => get_bloginfo( 'name' ),

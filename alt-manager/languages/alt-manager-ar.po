@@ -1,180 +1,175 @@
-# Translation of Plugins - Alt Manager - Development (trunk) in Arabic
-# This file is distributed under the same license as the Plugins - Alt Manager - Development (trunk) package.
+# Translation of Plugins - Image Alt Text Manager – Bulk &amp; Dynamic Alt Tags For image SEO Optimization + AI - Development (trunk) in Arabic
+# This file is distributed under the same license as the Plugins - Image Alt Text Manager – Bulk &amp; Dynamic Alt Tags For image SEO Optimization + AI - Development (trunk) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-12-12 14:30+0000\n"
+"PO-Revision-Date: 2025-04-18 19:47:00+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=(n == 0) ? 0 : ((n == 1) ? 1 : ((n == 2) ? "
-"2 : ((n % 100 >= 3 && n % 100 <= 10) ? 3 : ((n % 100 >= 11 && n % 100 <= 99) "
-"? 4 : 5))));\n"
-"X-Generator: Loco https://localise.biz/\n"
+"Plural-Forms: nplurals=6; plural=(n == 0) ? 0 : ((n == 1) ? 1 : ((n == 2) ? 2 : ((n % 100 >= 3 && n % 100 <= 10) ? 3 : ((n % 100 >= 11 && n % 100 <= 99) ? 4 : 5))));\n"
+"X-Generator: GlotPress/4.0.1\n"
 "Language: ar\n"
-"Project-Id-Version: Plugins - Alt Manager - Development (trunk)\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-01 16:56+0000\n"
-"Last-Translator: saad <arabianmido@gmail.com>\n"
-"Language-Team: Arabic\n"
-"X-Loco-Version: 2.3.1; wp-5.5.1"
+"Project-Id-Version: Plugins - Image Alt Text Manager – Bulk &amp; Dynamic Alt Tags For image SEO Optimization + AI - Development (trunk)\n"
 
-#. Name of the plugin
-msgid "Alt Manager"
-msgstr "مدير سمات Alt"
+#: inc/alm-admin.php:557
+msgid "AI Generation are available for premium users only."
+msgstr "التوليد بإستخدام الذكاء الاصطناعي متوفر في النسخة المدفوعة فقط."
+
+#: inc/alm-admin.php:545
+msgid "AI Settings are available for premium users only."
+msgstr "إعدادات التوليد بإستخدام الذكاء الاصطناعي متوفرة في النسخة المدفوعة فقط."
+
+#: inc/alm-admin.php:512
+msgid "Custom Post Type Images Title"
+msgstr "عنوان صور نوع المنشور المخصص"
+
+#: inc/alm-admin.php:495
+msgid "Custom Post Type Images Alt"
+msgstr "النص البديل لصور نوع المقال المخصص"
+
+#: inc/alm-admin.php:489
+msgid "Custom Post Type Images Settings"
+msgstr "إعدادات صور نوع المقال المخصص"
+
+#: inc/alm-admin.php:464 inc/alm-admin.php:481 inc/alm-admin.php:506
+#: inc/alm-admin.php:523
+msgid "Upgrade to Premium"
+msgstr "الترقية إلى النسخة المدفوعة"
+
+#: inc/alm-admin.php:458 inc/alm-admin.php:475 inc/alm-admin.php:500
+#: inc/alm-admin.php:517
+msgid "Available in Premium"
+msgstr "متوفر في النسخة المدفوعة"
 
 #. Description of the plugin
-#| msgid ""
-#| "This Plugin blulk changes images Alt and Title attributes for WordPress "
-#| "images"
-msgid ""
-"Alt Manager bulk changes images Alt and Title attributes for WordPress "
-"images."
-msgstr "تقوم هذه الإضافة بشكل مجمع على تغيير سمات Alt و Title لصور ووردبريس"
+#: alt-manager.php
+msgid "Automatically bulk change images alt text to dynamic alt tags values related to content or media and also generate empty values for both alt and title tags."
+msgstr "تغيير النص البديل للصور تلقائيًا إلى قيم نصوص بديلة ديناميكية مرتبطة بالمحتوى أو الوسائط وإنشاء قيم فارغة لكل من علامات البديل والعنوان."
 
-#: inc/alm-admin.php:289
-msgid "Alt Manager Settings"
-msgstr "إعدادت مدير Alt"
+#. Plugin Name of the plugin
+#: alt-manager.php
+msgid "Image Alt Text Manager"
+msgstr "مدير النص البديل للصور"
 
-#: inc/alm-admin.php:607
-msgid "Custom Post Type Images Alt"
-msgstr "إعدادات وسم Alt لنوع المقالة المخصص"
+#. Author of the plugin
+#: alt-manager.php
+msgid "WPSAAD"
+msgstr "WPSAAD"
 
-#: inc/alm-admin.php:603
-msgid "Custom Post Type Images Settings"
-msgstr "إعدادات صور نوع المقالة المخصص"
-
-#: inc/alm-admin.php:636
-msgid "Custom Post Type Images Title"
-msgstr "إعدادات وسم Title لنوع المقالة المخصص"
-
-#: inc/alm-admin.php:305
-#| msgid "Generate Only Empty Alt Tags:"
-msgid "Generate Only Empty Alt"
-msgstr "تغيير قيم وسوم Alt الفارغة فقط"
-
-#: inc/alm-admin.php:325
-#| msgid "Generate Only Empty Title Tags:"
+#: inc/alm-admin.php:218
 msgid "Generate Only Empty Title"
-msgstr "تغيير قيم وسوم Title الفارغة فقط"
+msgstr "إنشاء عناوين الصور الفارغة فقط"
 
-#: inc/alm-admin.php:274
-msgid "Get Alt Manager Premium Features"
-msgstr "احصل على مميزات مدير سمات Alt المدفوعة"
+#: inc/alm-admin.php:197
+msgid "Generate Only Empty Alt"
+msgstr "إنشاء النص البديل للصور الفارغة فقط"
 
-#: inc/alm-admin.php:350
-msgid "Home Images Alt"
-msgstr "سمة Alt في صور الصفحة الرئيسية"
-
-#: inc/alm-admin.php:378
-msgid "Home Images Title"
-msgstr "سمة Title في صور الصفحة الرئيسية"
-
-#: inc/alm-admin.php:346
-msgid "Homepage Images Settings"
-msgstr "إعدادات صور الصفحة الرئيسية"
-
-#. Author URI of the plugin
-msgid "https://wpsaad.com"
-msgstr "https://wpsaad.com"
-
-#. URI of the plugin
+#. Plugin URI of the plugin
+#: alt-manager.php
 msgid "https://wpsaad.com/alt-manager-wordpress-image-alt-text-plugin/"
-msgstr "https://wpsaad.com/alt-manager-wordpress-image-alt-text-plugin/"
+msgstr "https://wpsaad.com/alt-manager-wordpress-image-alt-text-plugin"
 
-#: inc/alm-admin.php:423
-msgid ""
-"If homepage is set to Your latest posts alt and title will be site name by "
-"default."
-msgstr ""
-"في حالة تم ضبط الصفحة الرئيسية لتكون اخر المقالات ستكون سمة alt و title "
-"بعنوان الموقع افتراضيا."
-
-#: inc/alm-admin.php:46 inc/alm-admin.php:94 inc/alm-admin.php:142
-#: inc/alm-admin.php:191 inc/alm-admin.php:239
-msgid "Image Alt"
-msgstr "النص البديل للصورة"
-
-#: inc/alm-admin.php:54 inc/alm-admin.php:102 inc/alm-admin.php:150
-#: inc/alm-admin.php:199 inc/alm-admin.php:247
-msgid "Image Caption"
-msgstr "شرح الصورة"
-
-#: inc/alm-admin.php:58 inc/alm-admin.php:106 inc/alm-admin.php:154
-#: inc/alm-admin.php:203 inc/alm-admin.php:251
+#: inc/alm-admin.php:42 inc/alm-admin.php:88 inc/alm-admin.php:134
 msgid "Image Description"
 msgstr "وصف الصورة"
 
-#: inc/alm-admin.php:50 inc/alm-admin.php:98 inc/alm-admin.php:146
-#: inc/alm-admin.php:195 inc/alm-admin.php:243
+#: inc/alm-admin.php:38 inc/alm-admin.php:84 inc/alm-admin.php:130
+msgid "Image Caption"
+msgstr "شرح الصورة"
+
+#: inc/alm-admin.php:34 inc/alm-admin.php:80 inc/alm-admin.php:126
 msgid "Image Name"
 msgstr "اسم الصورة"
 
-#. Author of the plugin
-msgid "Mohamed Saad"
-msgstr "محمد سعد"
+#: inc/alm-admin.php:30 inc/alm-admin.php:76 inc/alm-admin.php:122
+msgid "Image Alt"
+msgstr "النص البديل للصورة"
 
-#: inc/alm-admin.php:423
-msgid "Note: "
-msgstr "ملحوظة:"
-
-#: inc/alm-admin.php:33 inc/alm-admin.php:81
-msgid "Page Title"
-msgstr "عنوان الصفحة"
-
-#: inc/alm-admin.php:432
-msgid "Pages Images Alt"
-msgstr "سمة Alt في صور الصفحات"
-
-#: inc/alm-admin.php:428
-msgid "Pages Images Settings"
-msgstr "خصائص الصور في الصفحات"
-
-#: inc/alm-admin.php:458
-msgid "Pages Images Title"
-msgstr "سمة Title في صور الصفحات"
-
-#: inc/alm-admin.php:129 inc/alm-admin.php:226
-msgid "Post Title"
-msgstr "عنوان المقالة"
-
-#: inc/alm-admin.php:488
-msgid "Posts Images Alt"
-msgstr "سمة Alt في صور المقالات"
-
-#: inc/alm-admin.php:484
-msgid "Posts Images Settings"
-msgstr "خصائص الصور في المقالات"
-
-#: inc/alm-admin.php:514
-msgid "Posts Images Title"
-msgstr "سمة Title في صور المقالات"
-
-#: inc/alm-admin.php:178
-msgid "Product Title"
-msgstr "عنوان المنتج"
-
-#: inc/alm-admin.php:548
-msgid "Products Images Alt"
-msgstr "وسم Alt لصور المنتجات"
-
-#: inc/alm-admin.php:544
-msgid "Products Images Settings"
-msgstr "اعدادات صور المنتجات"
-
-#: inc/alm-admin.php:575
-msgid "Products Images Title"
-msgstr "وسم Title لصور المنتجات"
-
-#: inc/alm-admin.php:42 inc/alm-admin.php:90 inc/alm-admin.php:138
-#: inc/alm-admin.php:187 inc/alm-admin.php:235
+#: inc/alm-admin.php:26 inc/alm-admin.php:72 inc/alm-admin.php:118
 msgid "Site Description"
 msgstr "وصف الموقع"
 
-#: inc/alm-admin.php:38 inc/alm-admin.php:86 inc/alm-admin.php:134
-#: inc/alm-admin.php:183 inc/alm-admin.php:231
-msgid "Site Name"
-msgstr "اسم الموقع"
+#. Author URI of the plugin
+#: alt-manager.php
+msgid "https://wpsaad.com"
+msgstr "https://wpsaad.com"
 
-#: inc/alm-admin.php:277
+#: inc/alm-admin.php:319
+msgid "If homepage is set to Your latest posts alt and title will be site name by default."
+msgstr "في حالة تم ضبط الصفحة الرئيسية لتكون اخر المقالات ستكون سمة alt و title بعنوان الموقع افتراضيا."
+
+#: inc/alm-admin.php:317
+msgid "Note: "
+msgstr "ملحوظة:"
+
+#: inc/alm-admin.php:470
+msgid "Products Images Title"
+msgstr "عنوان صور المنتجات"
+
+#: inc/alm-admin.php:453
+msgid "Products Images Alt"
+msgstr "النص البديل لصور المنتجات"
+
+#: inc/alm-admin.php:447
+msgid "Products Images Settings"
+msgstr "إعدادات صور المنتجات"
+
+#: inc/alm-admin.php:157 inc/alm-admin.php:549 inc/alm-admin.php:561
 msgid "Upgrade Now!"
 msgstr "تحديث الآن!"
+
+#: inc/alm-admin.php:155
+msgid "Get Alt Manager Premium Features"
+msgstr "احصل على مميزات مدير سمات Alt المدفوعة"
+
+#: inc/alm-admin.php:275
+msgid "Home Images Title"
+msgstr "سمة Title في صور الصفحة الرئيسية"
+
+#: inc/alm-admin.php:246
+msgid "Home Images Alt"
+msgstr "سمة Alt في صور الصفحة الرئيسية"
+
+#: inc/alm-admin.php:240
+msgid "Homepage Images Settings"
+msgstr "إعدادات صور الصفحة الرئيسية"
+
+#: inc/alm-admin.php:418
+msgid "Posts Images Title"
+msgstr "سمة Title في صور المقالات"
+
+#: inc/alm-admin.php:391
+msgid "Posts Images Alt"
+msgstr "سمة Alt في صور المقالات"
+
+#: inc/alm-admin.php:385
+msgid "Posts Images Settings"
+msgstr "خصائص الصور في المقالات"
+
+#: inc/alm-admin.php:359
+msgid "Pages Images Title"
+msgstr "سمة Title في صور الصفحات"
+
+#: inc/alm-admin.php:332
+msgid "Pages Images Alt"
+msgstr "سمة Alt في صور الصفحات"
+
+#: inc/alm-admin.php:326
+msgid "Pages Images Settings"
+msgstr "خصائص الصور في الصفحات"
+
+#: inc/alm-admin.php:181
+msgid "Alt Manager Settings"
+msgstr "إعدادت مدير Alt"
+
+#: inc/alm-admin.php:110
+msgid "Post Title"
+msgstr "عنوان المقالة"
+
+#: inc/alm-admin.php:18 inc/alm-admin.php:64
+msgid "Page Title"
+msgstr "عنوان الصفحة"
+
+#: inc/alm-admin.php:22 inc/alm-admin.php:68 inc/alm-admin.php:114
+msgid "Site Name"
+msgstr "اسم الموقع"
