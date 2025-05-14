@@ -1,6 +1,6 @@
 === Image Alt Text Manager – Bulk & Dynamic Alt Tags For image SEO Optimization + AI ===
 Contributors: wpsaad, arabianmido, freemius
-Tags: image alt text, image alt, images seo, google images, ai
+Tags: alt text, image alt, images seo, image alt text, ai
 
 Requires at least: 2.8.0
 Tested up to: 6.8
@@ -15,6 +15,10 @@ Automatically bulk change images alt text to dynamic alt tags values related to 
 == Description ==
 <iframe width="560" height="315" src="https://www.youtube.com/embed/FyR9kdrL-ck" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 <p>Image Alt Text Manager automatically and dynamically bulk change WordPress images alt text and also generate empty values on your (Homepage - Pages - Posts - Blog )<strong>[Free Version]</strong> (Products - Shop page - Custom Post Type - Custom Post Type archive page)<strong>[Premium Version]</strong> separately to several dynamic related values. Additionally, the <strong>AI Generation Feature</strong> in the premium version allows you to generate context-aware alt text using artificial intelligence powered by the ChatGPT API. This plugin is a full solution for generating alt and title values.</p>
+<p><strong>Why Images SEO performance on search engines?</strong></p>
+<p>Images SEO performance is so important on search engines like <a href="https://developers.google.com/search/docs/appearance/google-images">Google images</a> to bring traffic to your website as its shows your website images on related keywords.</p>
+<p>Google Images uses alt text to connect images to the right keywords on Google images. also when your images come on a keyword at Google images it brings also the page URL where this images found.</p>
+<p>That's why Image Alt Text Manager comes with dynamic related alt and title to give your website images the best performance on Google images and also to improve your website SEO performance on Google insights and other search engines.</p>
 <blockquote>
 <p><strong>Works like a charm</strong><br>
   It’s perfect, this is what I needed. Now my site SEO score is really high. Thank you!
@@ -83,10 +87,6 @@ Automatically bulk change images alt text to dynamic alt tags values related to 
 <li>Improve Your Images SEO performance search engines.</li>
 <li>Compatible with <a href="https://wpml.org/plugin/alt-manager/">WPML.</a></li>
 </ul>
-<p><strong>Why Images SEO performance on search engines?</strong></p>
-<p>Images SEO performance is so important on search engines like Google images to bring traffic to your website as its shows your website images on related keywords.</p>
-<p>Google Images uses alt text to connect images to the right keywords on Google images. also when your images come on a keyword at Google images it brings also the page URL where this images found.</p>
-<p>That's why Image Alt Text Manager comes with dynamic related alt and title to give your website images the best performance on Google images and also to improve your website SEO performance on Google insights and other search engines.</p>
 <p><strong>Got any issues:</strong></p>
 <p>Dont hesitate to contact us via:</p>
 <p><a href="https://wordpress.org/support/plugin/alt-manager/" >Plugin support forums</a> Or <a href="https://wpsaad.com/support/"><strong>Premium Version Support</strong></a></p>
