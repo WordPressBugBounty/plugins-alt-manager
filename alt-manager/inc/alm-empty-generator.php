@@ -14,38 +14,6 @@ class alm_dom_generator {
         // add_filter( 'post_thumbnail_html', [$this, 'alm_generator'], PHP_INT_MAX );
     }
 
-    // retrieves the attachment ID from the file URL
-    function alm_is_featured( $url, $option = '' ) {
-        // Check if the URL is empty
-        if ( empty( $url ) ) {
-            return false;
-        }
-        $dir = wp_upload_dir();
-        switch ( $option ) {
-            case 'ID':
-                // Attempt to get attachment ID from URL
-                $attachment_id = ( function_exists( 'attachment_url_to_postid' ) ? attachment_url_to_postid( $url ) : url_to_postid( $url ) );
-                if ( !$attachment_id ) {
-                    // Remove size from filename (e.g., -150x150)
-                    $url = preg_replace( '/-\\d+x\\d+(?=\\.(jpg|jpeg|png|gif)$)/i', '', $url );
-                    $attachment_id = attachment_url_to_postid( $url );
-                }
-                return ( $attachment_id ? $attachment_id : false );
-            default:
-                // Check if URL is a post thumbnail
-                global $post;
-                if ( $post ) {
-                    $thumbnail_id = get_post_thumbnail_id( $post->ID );
-                    $thumbnail_url = wp_get_attachment_url( $thumbnail_id );
-                    if ( $thumbnail_url === $url ) {
-                        return true;
-                    }
-                }
-                return false;
-        }
-        return false;
-    }
-
     function alm_init() {
         if ( !is_singular( array('post', 'page', 'product') ) ) {
             return;
@@ -61,9 +29,7 @@ class alm_dom_generator {
         $html = str_get_html( $alm_data_generator );
         $generate_empty_alt = get_option( 'only_empty_images_alt' );
         $generate_empty_title = get_option( 'only_empty_images_title' );
-        // var_dump($alm_data_generator);
         $ID = get_the_ID();
-        // // Get post type
         $type = get_post_field( 'post_type', $ID );
         $post_types = get_post_types();
         $types = [];
@@ -80,9 +46,10 @@ class alm_dom_generator {
             }
         }
         if ( is_singular( $types ) && !is_admin() && !empty( $alm_data_generator ) ) {
-            // print_r($alm_data_generator);
             foreach ( $html->find( 'img' ) as $img ) {
-                $is_image_featured = $this->alm_is_featured( $img->getAttribute( 'src' ) );
+                $img_classes = explode( ' ', $img->getAttribute( 'class' ) );
+                // Only check if image is featured by class
+                $is_featured = in_array( 'wp-post-image', $img_classes );
                 //WPML Compatibility Custom Alt
                 if ( $img->getAttribute( 'class' ) == 'wpml-ls-flag' ) {
                     $next_sibling = $img->next_sibling();
@@ -90,9 +57,7 @@ class alm_dom_generator {
                         $img->setAttribute( 'alt', $next_sibling->innertext() );
                     }
                 }
-                if ( $is_image_featured && $img->getAttribute( 'class' ) !== 'wpml-ls-flag' || empty( $img->getAttribute( 'alt' ) ) ) {
-                    $attachment_id = $this->alm_is_featured( $img->getAttribute( 'src' ), 'ID' );
-                    // $parent = get_post_field('post_parent', $attachment_id);
+                if ( !$is_featured && $img->getAttribute( 'class' ) !== 'wpml-ls-flag' || empty( $img->getAttribute( 'alt' ) ) ) {
                     // options
                     $options = [
                         'Site Name'        => get_bloginfo( 'name' ),

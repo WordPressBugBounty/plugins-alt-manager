@@ -5,7 +5,7 @@ Tags: alt text, image alt, images seo, image alt text, ai
 Requires at least: 2.8.0
 Tested up to: 6.8
 Requires PHP: 5.2.4
-Stable tag: 1.6.8
+Stable tag: 1.6.9
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -139,9 +139,12 @@ Make sure you are inspecting image element not a background image.
 3. AI Images Alt & Title Tab
 
 == Changelog ==
+= 1.6.9 =
+* Fixed Feature Generation And Improved Logic.
 = 1.6.8 =
 * Hight Performance Optomization.
-* Added Feature Image Detection For High SEO Performance
+* Added Feature Image Detection For High SEO Performance.
+* Excluded Featured From Empty Generation.
 = 1.6.7 =
 * AI Feature added.
 = 1.6.3 =
