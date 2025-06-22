@@ -31,23 +31,23 @@ if ( !function_exists( 'alm_image_attributes' ) ) {
             $options['Image Caption'] = $attachment->post_excerpt;
             $options['Image Description'] = $attachment->post_content;
         }
-        $generate_empty_alt = get_option( 'only_empty_images_alt' );
-        $generate_empty_title = get_option( 'only_empty_images_title' );
+        $generate_empty_alt = alm_get_option( 'only_empty_images_alt' );
+        $generate_empty_title = alm_get_option( 'only_empty_images_title' );
         //check page type
         if ( is_page( $ID ) ) {
             $alt = '';
             $title = '';
             //Page Images Alt
-            if ( !empty( get_option( 'pages_images_alt' ) ) && is_array( get_option( 'pages_images_alt' ) ) ) {
-                foreach ( get_option( 'pages_images_alt' ) as $option ) {
+            if ( !empty( alm_get_option( 'pages_images_alt' ) ) && is_array( alm_get_option( 'pages_images_alt' ) ) ) {
+                foreach ( alm_get_option( 'pages_images_alt' ) as $option ) {
                     if ( array_key_exists( $option, $options ) ) {
                         $alt .= $options[$option];
                     } else {
                         $alt .= $option;
                     }
                 }
-            } elseif ( !empty( get_option( 'pages_images_alt' ) ) && !is_array( get_option( 'pages_images_alt' ) ) ) {
-                $alt = $options[get_option( 'pages_images_alt' )];
+            } elseif ( !empty( alm_get_option( 'pages_images_alt' ) ) && !is_array( alm_get_option( 'pages_images_alt' ) ) ) {
+                $alt = $options[alm_get_option( 'pages_images_alt' )];
             }
             //Empty alt option
             if ( $generate_empty_alt == 'enabled' && empty( $attr['alt'] ) ) {
@@ -58,16 +58,16 @@ if ( !function_exists( 'alm_image_attributes' ) ) {
                 $attr['alt'] = $alt;
             }
             //Page images title
-            if ( !empty( get_option( 'pages_images_title' ) ) && is_array( get_option( 'pages_images_title' ) ) ) {
-                foreach ( get_option( 'pages_images_title' ) as $option ) {
+            if ( !empty( alm_get_option( 'pages_images_title' ) ) && is_array( alm_get_option( 'pages_images_title' ) ) ) {
+                foreach ( alm_get_option( 'pages_images_title' ) as $option ) {
                     if ( array_key_exists( $option, $options ) ) {
                         $title .= $options[$option];
                     } else {
                         $title .= ' ' . $option . ' ';
                     }
                 }
-            } elseif ( !empty( get_option( 'pages_images_title' ) ) && !is_array( get_option( 'pages_images_title' ) ) ) {
-                $title = $options[get_option( 'pages_images_title' )];
+            } elseif ( !empty( alm_get_option( 'pages_images_title' ) ) && !is_array( alm_get_option( 'pages_images_title' ) ) ) {
+                $title = $options[alm_get_option( 'pages_images_title' )];
             }
             //Empty title option
             if ( $generate_empty_title == 'enabled' && empty( get_the_title( $attachment->ID ) ) ) {
@@ -83,8 +83,8 @@ if ( !function_exists( 'alm_image_attributes' ) ) {
             $alt = '';
             $title = '';
             //Homepage Images Alt
-            if ( !empty( get_option( 'home_images_alt' ) ) && is_array( get_option( 'home_images_alt' ) ) ) {
-                foreach ( get_option( 'home_images_alt' ) as $option ) {
+            if ( !empty( alm_get_option( 'home_images_alt' ) ) && is_array( alm_get_option( 'home_images_alt' ) ) ) {
+                foreach ( alm_get_option( 'home_images_alt' ) as $option ) {
                     if ( array_key_exists( $option, $options ) ) {
                         $alt .= $options[$option];
                         // var_dump($options[$option]);
@@ -92,8 +92,8 @@ if ( !function_exists( 'alm_image_attributes' ) ) {
                         $alt .= $option;
                     }
                 }
-            } elseif ( !empty( get_option( 'home_images_alt' ) ) && !is_array( get_option( 'home_images_alt' ) ) ) {
-                $alt = $options[get_option( 'home_images_alt' )];
+            } elseif ( !empty( alm_get_option( 'home_images_alt' ) ) && !is_array( alm_get_option( 'home_images_alt' ) ) ) {
+                $alt = $options[alm_get_option( 'home_images_alt' )];
             }
             if ( $generate_empty_alt == 'enabled' && empty( $attr['alt'] ) ) {
                 $attr['alt'] = $alt;
@@ -103,16 +103,16 @@ if ( !function_exists( 'alm_image_attributes' ) ) {
                 $attr['alt'] = $alt;
             }
             //Homepage images title
-            if ( !empty( get_option( 'home_images_title' ) ) && is_array( get_option( 'home_images_title' ) ) ) {
-                foreach ( get_option( 'home_images_title' ) as $option ) {
+            if ( !empty( alm_get_option( 'home_images_title' ) ) && is_array( alm_get_option( 'home_images_title' ) ) ) {
+                foreach ( alm_get_option( 'home_images_title' ) as $option ) {
                     if ( array_key_exists( $option, $options ) ) {
                         $title .= $options[$option];
                     } else {
                         $title .= ' ' . $option . ' ';
                     }
                 }
-            } elseif ( !empty( get_option( 'home_images_title' ) ) && !is_array( get_option( 'home_images_title' ) ) ) {
-                $title = $options[get_option( 'home_images_title' )];
+            } elseif ( !empty( alm_get_option( 'home_images_title' ) ) && !is_array( alm_get_option( 'home_images_title' ) ) ) {
+                $title = $options[alm_get_option( 'home_images_title' )];
             }
             //Empty title option
             if ( $generate_empty_title == 'enabled' && empty( get_the_title( $attachment->ID ) ) ) {
@@ -127,18 +127,18 @@ if ( !function_exists( 'alm_image_attributes' ) ) {
         if ( is_single( $ID ) && $type == 'post' ) {
             $alt = '';
             $title = '';
-            // var_dump(get_option('post_images_alt'));
+            // var_dump(alm_get_option('post_images_alt'));
             //Posts Images Alt
-            if ( !empty( get_option( 'post_images_alt' ) ) && is_array( get_option( 'post_images_alt' ) ) ) {
-                foreach ( get_option( 'post_images_alt' ) as $option ) {
+            if ( !empty( alm_get_option( 'post_images_alt' ) ) && is_array( alm_get_option( 'post_images_alt' ) ) ) {
+                foreach ( alm_get_option( 'post_images_alt' ) as $option ) {
                     if ( array_key_exists( $option, $options ) ) {
                         $alt .= $options[$option];
                     } else {
                         $alt .= ' ' . $option . ' ';
                     }
                 }
-            } elseif ( !empty( get_option( 'post_images_alt' ) ) && !is_array( get_option( 'post_images_alt' ) ) ) {
-                $alt = $options[get_option( 'post_images_alt' )];
+            } elseif ( !empty( alm_get_option( 'post_images_alt' ) ) && !is_array( alm_get_option( 'post_images_alt' ) ) ) {
+                $alt = $options[alm_get_option( 'post_images_alt' )];
             }
             //Empty alt option
             if ( $generate_empty_alt == 'enabled' && empty( $attr['alt'] ) ) {
@@ -149,16 +149,16 @@ if ( !function_exists( 'alm_image_attributes' ) ) {
                 $attr['alt'] = $alt;
             }
             //Posts images title
-            if ( !empty( get_option( 'post_images_title' ) ) && is_array( get_option( 'post_images_title' ) ) ) {
-                foreach ( get_option( 'post_images_title' ) as $option ) {
+            if ( !empty( alm_get_option( 'post_images_title' ) ) && is_array( alm_get_option( 'post_images_title' ) ) ) {
+                foreach ( alm_get_option( 'post_images_title' ) as $option ) {
                     if ( array_key_exists( $option, $options ) ) {
                         $title .= $options[$option];
                     } else {
                         $title .= ' ' . $option . ' ';
                     }
                 }
-            } elseif ( !empty( get_option( 'post_images_title' ) ) && !is_array( get_option( 'post_images_title' ) ) ) {
-                $title = $options[get_option( 'post_images_title' )];
+            } elseif ( !empty( alm_get_option( 'post_images_title' ) ) && !is_array( alm_get_option( 'post_images_title' ) ) ) {
+                $title = $options[alm_get_option( 'post_images_title' )];
             }
             //Empty title option
             if ( $generate_empty_title == 'enabled' && empty( get_the_title( $attachment->ID ) ) ) {

@@ -10,7 +10,7 @@
  * Plugin Name: Image Alt Text Manager
  * plugin URI: https://wpsaad.com/alt-manager-wordpress-image-alt-text-plugin/
  * Description:Automatically bulk change images alt text to dynamic alt tags values related to content or media and also generate empty values for both alt and title tags.
- * Version: 1.6.9
+ * Version: 1.7.0
  * Author: WPSAAD
  * Author URI: https://wpsaad.com
  * License: GPLv2 or later
@@ -85,6 +85,14 @@ if ( function_exists( 'am_fs' ) ) {
     //load plugin required files
     add_action( 'init', 'alm_load' );
     function alm_load() {
+        // Add this helper at the top of your file
+        function alm_get_option(  $option, $default = false  ) {
+            if ( is_multisite() && is_network_admin() ) {
+                return get_site_option( $option, $default );
+            }
+            return get_option( $option, $default );
+        }
+
         require_once plugin_dir_path( __FILE__ ) . 'inc/alm-functions.php';
         require_once plugin_dir_path( __FILE__ ) . 'inc/alm-empty-generator.php';
         if ( user_can( get_current_user_id(), 'manage_options' ) ) {

@@ -66,11 +66,11 @@ $error_message = '';
 function render_api_key_field()
 {
     $endpoint_url = 'https://api.openai.com/v1/chat/completions'; // Set API URL
-    $api_key = get_option('alm_ai_api_key');
+    $api_key = alm_get_option('alm_ai_api_key');
 
     $api_valid = alm_check_api_status($endpoint_url, $api_key, $error_message);
 
-    $value = esc_attr(get_option('alm_ai_api_key'));
+    $value = esc_attr(alm_get_option('alm_ai_api_key'));
     echo "<input type='text' name='alm_ai_api_key' id='alm_ai_api_key' value='{$value}' class='regular-text'>";
     echo "<div id='alm-api-status' style='margin-top:5px;'></div>";
 ?>
