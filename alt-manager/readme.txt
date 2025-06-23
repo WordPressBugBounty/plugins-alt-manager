@@ -5,7 +5,7 @@ Tags: alt text, image alt, images seo, image alt text, ai
 Requires at least: 2.8.0
 Tested up to: 6.8
 Requires PHP: 5.2.4
-Stable tag: 1.7.0
+Stable tag: 1.7.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -147,8 +147,11 @@ Make sure you are inspecting image element not a background image.
 3. AI Images Alt & Title Tab
 
 == Changelog ==
-= Improved Network Multisite Functionality =
-= Fixed Attachment Data Issue =
+= 1.7.1 =
+* Added Avada Fusion Builder Compatibility
+= 1.7.0 =
+* Improved Network Multisite Functionality.
+* Fixed Attachment Data Issue.
 = 1.6.9 =
 * Fixed Feature Generation And Improved Logic.
 = 1.6.8 =

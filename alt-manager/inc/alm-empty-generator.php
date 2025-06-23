@@ -280,7 +280,8 @@ class alm_dom_generator {
                 }
             }
             // $html = $alm_content->saveHtml();
-            if ( wp_doing_ajax() ) {
+            // fb-edit query param to add fushion builder compatibility
+            if ( wp_doing_ajax() || isset( $_GET['fb-edit'] ) && $_GET['fb-edit'] == 1 ) {
                 $html = $alm_data_generator;
             }
             return $html;
