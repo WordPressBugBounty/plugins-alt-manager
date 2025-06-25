@@ -26,10 +26,18 @@ add_settings_section(
     'alm_ai_settings_section'
 );
 
-function alm_check_api_status($url, $key, &$error_message = '') {
-    if (empty($url) || empty($key)) {
-        $error_message = 'Missing API URL or Key';
-        return false;
+function alm_check_api_status($url, $key) {
+    if (empty($url)) {
+        return [
+            'success' => false,
+            'message' => 'API endpoint URL is missing.'
+        ];
+    }
+    if (empty($key)) {
+        return [
+            'success' => false,
+            'message' => 'API key is missing. Please enter your API key.'
+        ];
     }
 
     $response = wp_remote_post($url, [
@@ -47,40 +55,52 @@ function alm_check_api_status($url, $key, &$error_message = '') {
     ]);
 
     if (is_wp_error($response)) {
-        $error_message = $response->get_error_message();
-        return false;
+        return [
+            'success' => false,
+            'message' => $response->get_error_message()
+        ];
     }
 
     $body = json_decode(wp_remote_retrieve_body($response), true);
 
     if (!isset($body['choices'])) {
-        $error_message = isset($body['error']['message']) ? $body['error']['message'] : 'Unexpected response';
-        return $error_message;
+        return [
+            'success' => false,
+            'message' => isset($body['error']['message']) ? $body['error']['message'] : 'Unexpected response'
+        ];
     }
 
-    return true;
+    return [
+        'success' => true,
+        'message' => 'API Connected'
+    ];
 }
 
 $error_message = '';
 
 function render_api_key_field()
 {
-    $endpoint_url = 'https://api.openai.com/v1/chat/completions'; // Set API URL
+    $endpoint_url = 'https://api.openai.com/v1/chat/completions';
     $api_key = alm_get_option('alm_ai_api_key');
 
-    $api_valid = alm_check_api_status($endpoint_url, $api_key, $error_message);
+    $api_status = alm_check_api_status($endpoint_url, $api_key);
 
-    $value = esc_attr(alm_get_option('alm_ai_api_key'));
+    $value = esc_attr($api_key);
+
+    wp_nonce_field('alm_ai_api_key_update');
+
     echo "<input type='text' name='alm_ai_api_key' id='alm_ai_api_key' value='{$value}' class='regular-text'>";
     echo "<div id='alm-api-status' style='margin-top:5px;'></div>";
-?>
-    <div id="alm_api_status" style="font-weight: bold; color: <?php echo $api_valid ? 'green' : 'red'; ?>">
-        <?php echo $api_valid ? '✅ API Connected' : $api_valid.'❌ Invalid API or connection error'; ?>
+    ?>
+    <div id="alm_api_status" style="font-weight: bold; color: <?php echo $api_status['success'] ? 'green' : 'red'; ?>">
+        <?php
+        echo $api_status['success']
+            ? '✅ ' . esc_html($api_status['message'])
+            : '❌ ' . esc_html($api_status['message']);
+        ?>
     </div>
-
-<?php
+    <?php
 }
-
 add_settings_field('alm_ai_api_key', 'API Key', 'render_api_key_field', 'alm_ai_settings_section', 'alm_ai_section');
 
 

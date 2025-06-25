@@ -11,7 +11,8 @@ add_action( 'admin_menu', function () {
     );
 } );
 add_action( 'network_admin_menu', function () {
-    add_menu_page(
+    add_submenu_page(
+        'settings.php',
         'Alt Manager Network Settings',
         'Alt Manager',
         'manage_network_options',
@@ -20,6 +21,28 @@ add_action( 'network_admin_menu', function () {
     );
 } );
 function alm_settings_admin() {
+    if ( is_network_admin() && isset( $_POST['alm_ai_api_key'] ) ) {
+        if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'alm_ai_api_key_update' ) ) {
+            alm_update_option( 'alm_ai_api_key', sanitize_text_field( $_POST['alm_ai_api_key'] ) );
+        }
+    }
+    // Handle saving in network admin
+    if ( is_network_admin() && $_SERVER['REQUEST_METHOD'] === 'POST' && isset( $_POST['alm_network_settings_nonce'] ) ) {
+        if ( wp_verify_nonce( $_POST['alm_network_settings_nonce'], 'alm_network_settings_save' ) ) {
+            // Save each option
+            alm_update_option( 'only_empty_images_alt', ( isset( $_POST['only_empty_images_alt'] ) ? 'enabled' : '' ) );
+            alm_update_option( 'only_empty_images_title', ( isset( $_POST['only_empty_images_title'] ) ? 'enabled' : '' ) );
+            alm_update_option( 'home_images_alt', ( isset( $_POST['home_images_alt'] ) ? (array) $_POST['home_images_alt'] : [] ) );
+            alm_update_option( 'home_images_title', ( isset( $_POST['home_images_title'] ) ? (array) $_POST['home_images_title'] : [] ) );
+            alm_update_option( 'pages_images_alt', ( isset( $_POST['pages_images_alt'] ) ? (array) $_POST['pages_images_alt'] : [] ) );
+            alm_update_option( 'pages_images_title', ( isset( $_POST['pages_images_title'] ) ? (array) $_POST['pages_images_title'] : [] ) );
+            alm_update_option( 'post_images_alt', ( isset( $_POST['post_images_alt'] ) ? (array) $_POST['post_images_alt'] : [] ) );
+            alm_update_option( 'post_images_title', ( isset( $_POST['post_images_title'] ) ? (array) $_POST['post_images_title'] : [] ) );
+            echo '<div class="updated notice is-dismissible"><p>' . __( 'Settings saved.', 'alt-manager' ) . '</p></div>';
+        } else {
+            echo '<div class="error notice is-dismissible"><p>' . __( 'Security check failed.', 'alt-manager' ) . '</p></div>';
+        }
+    }
     $alm_home_options = array(
         'Page Title'        => [
             'value' => 'Page Title',
@@ -192,11 +215,17 @@ function alm_settings_admin() {
         ?></h1>
 
 
-        <form method="post" action="options.php">
+        <form method="post" action="<?php 
+        echo ( is_network_admin() ? '' : 'options.php' );
+        ?>">
             <?php 
         //  var_dump(alm_get_option('post_images_alt'));
-        settings_fields( 'alm_settings' );
-        do_settings_sections( 'alm_settings' );
+        if ( is_network_admin() ) {
+            wp_nonce_field( 'alm_network_settings_save', 'alm_network_settings_nonce' );
+        } else {
+            settings_fields( 'alm_settings' );
+            do_settings_sections( 'alm_settings' );
+        }
         ?>
 
             <table class="form-table">
@@ -539,7 +568,9 @@ function alm_settings_admin() {
         submit_button( 'Save Changes', 'primary', 'submit' );
         ?>
         </form>
-        <form method="post" action="options-general.php?page=alt-manager">
+        <form method="post" action="<?php 
+        echo ( is_network_admin() ? '' : 'options.php' );
+        ?>">
             <?php 
         wp_nonce_field( 'alm_reset_nonce', 'reset_nonce' );
         submit_button( 'Reset To Defaults', 'primary', 'reset' );

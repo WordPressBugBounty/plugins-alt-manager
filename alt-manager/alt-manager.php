@@ -10,7 +10,7 @@
  * Plugin Name: Image Alt Text Manager
  * plugin URI: https://wpsaad.com/alt-manager-wordpress-image-alt-text-plugin/
  * Description:Automatically bulk change images alt text to dynamic alt tags values related to content or media and also generate empty values for both alt and title tags.
- * Version: 1.7.1
+ * Version: 1.7.2
  * Author: WPSAAD
  * Author URI: https://wpsaad.com
  * License: GPLv2 or later
@@ -93,6 +93,14 @@ if ( function_exists( 'am_fs' ) ) {
             return get_option( $option, $default );
         }
 
+        // ALM fuction to update options in a multisite environment and network admin and single site
+        function alm_update_option(  $option, $value  ) {
+            if ( is_multisite() && is_network_admin() ) {
+                return update_site_option( $option, $value );
+            }
+            return update_option( $option, $value );
+        }
+
         require_once plugin_dir_path( __FILE__ ) . 'inc/alm-functions.php';
         require_once plugin_dir_path( __FILE__ ) . 'inc/alm-empty-generator.php';
         if ( user_can( get_current_user_id(), 'manage_options' ) ) {
@@ -101,14 +109,14 @@ if ( function_exists( 'am_fs' ) ) {
         if ( !function_exists( 'file_get_html' ) ) {
             require_once plugin_dir_path( __FILE__ ) . 'inc/simple_html_dom.php';
         }
+        //Generate activaition class
+        if ( !class_exists( 'almActivate' ) ) {
+            require_once plugin_dir_path( __FILE__ ) . 'inc/alm-activate.php';
+        }
+        //Activation Hook
+        register_activation_hook( __FILE__, array('almActivate', 'activate') );
     }
 
-    //Generate activaition class
-    if ( !class_exists( 'almActivate' ) ) {
-        require_once plugin_dir_path( __FILE__ ) . 'inc/alm-activate.php';
-    }
-    //Activation Hook
-    register_activation_hook( __FILE__, array('almActivate', 'activate') );
     //Activation & Reset
     add_action( 'admin_init', 'admin_page_functions' );
     function admin_page_functions() {
