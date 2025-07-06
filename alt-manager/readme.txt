@@ -5,7 +5,7 @@ Tags: alt text, image alt, images seo, image alt text, ai
 Requires at least: 2.8.0
 Tested up to: 6.8
 Requires PHP: 5.2.4
-Stable tag: 1.7.2
+Stable tag: 1.7.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -15,6 +15,8 @@ Automatically bulk change images alt text to dynamic alt tags values related to 
 == Description ==
 <iframe width="560" height="315" src="https://www.youtube.com/embed/FyR9kdrL-ck" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 <p>Image Alt Text Manager automatically and dynamically bulk change WordPress images alt text and also generate empty values on your (Homepage - Pages - Posts - Blog )<strong>[Free Version]</strong> (Products - Shop page - Custom Post Type - Custom Post Type archive page)<strong>[Premium Version]</strong> separately to several dynamic related values. Additionally, the <strong>AI Generation Feature</strong> in the premium version allows you to generate context-aware alt text using artificial intelligence powered by the ChatGPT API. This plugin is a full solution for generating alt and title values.</p>
+<p>Simply set the dynamic alt tag settings, and the plugin will immediately generate and update all images alt attributes across your website with the new dynamic values.
+</p>
 <p><strong>Why Images SEO performance on search engines?</strong></p>
 <p>Images SEO performance is so important on search engines like <a href="https://developers.google.com/search/docs/appearance/google-images">Google images</a> to bring traffic to your website as its shows your website images on related keywords.</p>
 <p>Google Images uses alt text to connect images to the right keywords on Google images. also when your images come on a keyword at Google images it brings also the page URL where this images found.</p>
@@ -100,7 +102,7 @@ Automatically bulk change images alt text to dynamic alt tags values related to 
 <p><a href="https://wordpress.org/support/plugin/alt-manager/" >Plugin support forums</a> Or <a href="https://wpsaad.com/support/"><strong>Premium Version Support</strong></a></p>
 <p>Also we provide <strong><a href="http://support.motkhases.com/" >a WordPress proffissonal support services</a></strong> with both free and premium plans.</p>
 
-<p><strong><a href="https://wpsaad.com/product/image-alt-text-manager-wordpress-plugin-for-images-seo/" >Upgrade to premium Version</a></strong></p>
+<p><strong><a href="https://wpsaad.com/product/image-alt-text-manager-bulk-alt-tags/" >Upgrade to premium Version</a></strong></p>
 
 <h3>WPSAAD Free WordPress Plugins</h3>
 <ul>
@@ -112,7 +114,7 @@ Automatically bulk change images alt text to dynamic alt tags values related to 
 </ul>
 <h3>WPSAAD Pro WordPress Plugins</h3>
 <ul>
- 	<li><a href="https://wpsaad.com/product/image-alt-text-manager-wordpress-plugin-for-images-seo/">WordPress Images Alt Manager</a></li>
+ 	<li><a href="https://wpsaad.com/product/image-alt-text-manager-bulk-alt-tags/">WordPress Images Alt Manager</a></li>
  	<li><a href="https://wpsaad.com/product/custom-product-type-for-woocommerce/">WooCommerce Custom Produdct Type</a></li>
  	<li><a href="https://wpsaad.com/product/shipping-manager-for-woocommerce/">WooCommerce Shipping Manager</a></li>
 	<li><a href="https://wpsaad.com/product/wpsaad-addons-for-dokan-and-elementor/">Addons For Dokan And Elementor</a></li>
@@ -147,7 +149,9 @@ Make sure you are inspecting image element not a background image.
 3. AI Images Alt & Title Tab
 
 == Changelog ==
-1.7.2 =
+= 1.7.3 =
+* Imrpoved Empty Functionality.
+= 1.7.2 =
 * Improved AI Performance and compatibility.
 * Improved Network Functionality.
 = 1.7.1 =
