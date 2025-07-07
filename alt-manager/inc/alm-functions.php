@@ -33,16 +33,6 @@ if ( !function_exists( 'alm_image_attributes' ) ) {
         }
         $generate_empty_alt = alm_get_option( 'only_empty_images_alt' );
         $generate_empty_title = alm_get_option( 'only_empty_images_title' );
-        // Prevent alt/title for pro types in free version, even on homepage
-        // Define pro types: 'product' and any custom post type (not 'post', 'page', 'attachment')
-        $default_types = ['post', 'page', 'attachment'];
-        $pro_types = ['product'];
-        if ( !in_array( $type, $default_types ) && post_type_exists( $type ) ) {
-            $pro_types[] = $type;
-        }
-        if ( !am_fs()->is__premium_only() && in_array( $type, $pro_types ) ) {
-            return $attr;
-        }
         //check page type
         if ( is_page( $ID ) ) {
             $alt = '';

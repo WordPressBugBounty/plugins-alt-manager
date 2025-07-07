@@ -569,7 +569,7 @@ function alm_settings_admin() {
         ?>
         </form>
         <form method="post" action="<?php 
-        echo ( is_network_admin() ? '' : 'options.php' );
+        echo ( is_network_admin() ? '' : 'options-general.php?page=alt-manager' );
         ?>">
             <?php 
         wp_nonce_field( 'alm_reset_nonce', 'reset_nonce' );

@@ -9,21 +9,22 @@ class alm_dom_generator {
             PHP_INT_MAX,
             1
         );
-        add_filter(
-            'woocommerce_single_product_image_html',
-            [$this, 'alm_generator'],
-            PHP_INT_MAX,
-            2
-        );
-        add_filter(
-            'woocommerce_single_product_image_thumbnail_html',
-            [$this, 'alm_generator'],
-            PHP_INT_MAX,
-            2
-        );
         // add_filter( 'the_content', [$this, 'alm_generator'], PHP_INT_MAX );
         // add_filter( 'woocommerce_single_product_image_thumbnail_html', [$this, 'alm_generator'], 0 );
         // add_filter( 'post_thumbnail_html', [$this, 'alm_generator'], PHP_INT_MAX );
+    }
+
+    function alm_posts_attachments_ids() {
+        $args = array(
+            'fields'         => 'ids',
+            'posts_per_page' => -1,
+        );
+        $post_ids = get_posts( $args );
+        $found = [];
+        foreach ( $post_ids as $id ) {
+            $found[] = get_post_thumbnail_id( $id );
+        }
+        return $found;
     }
 
     function alm_get_image_id( $url ) {
@@ -47,10 +48,7 @@ class alm_dom_generator {
                 foreach ( $query->posts as $post_id ) {
                     $meta = wp_get_attachment_metadata( $post_id );
                     $original_file = basename( $meta['file'] );
-                    $cropped_image_files = [];
-                    if ( isset( $meta['sizes'] ) && is_array( $meta['sizes'] ) ) {
-                        $cropped_image_files = wp_list_pluck( $meta['sizes'], 'file' );
-                    }
+                    $cropped_image_files = wp_list_pluck( $meta['sizes'], 'file' );
                     if ( $original_file === $file || in_array( $file, $cropped_image_files ) ) {
                         $attachment_id = $post_id;
                         break;
@@ -72,11 +70,11 @@ class alm_dom_generator {
         ob_start( 'get_content' );
     }
 
-    function alm_generator( $alm_data_generator, $post_id = null ) {
+    function alm_generator( $alm_data_generator ) {
         $html = str_get_html( $alm_data_generator );
-        $ID = ( $post_id ? $post_id : get_the_ID() );
-        $alt = 'My Fixed Alt for Product ' . intval( $post_id );
-        $title = 'My Fixed Title for Product ' . intval( $post_id );
+        $generate_empty_alt = alm_get_option( 'only_empty_images_alt' );
+        $generate_empty_title = alm_get_option( 'only_empty_images_title' );
+        $ID = get_the_ID();
         $type = get_post_field( 'post_type', $ID );
         $post_types = get_post_types();
         $types = [];
@@ -94,6 +92,7 @@ class alm_dom_generator {
         }
         if ( is_singular( $types ) && !is_admin() && !empty( $alm_data_generator ) ) {
             foreach ( $html->find( 'img' ) as $img ) {
+                $attachments_ids = $this->alm_posts_attachments_ids();
                 $attachment_id = $this->alm_get_image_id( $img->getAttribute( 'src' ) );
                 $img_classes = explode( ' ', $img->getAttribute( 'class' ) );
                 // Only check if image is featured by class
@@ -136,8 +135,7 @@ class alm_dom_generator {
                         $img->setAttribute( 'alt', $alt );
                         $img->setAttribute( 'title', $title );
                     }
-                    //Check image is not logo and has no alt or title
-                    if ( !$logo_checker && (empty( $img->getAttribute( 'alt' ) ) || empty( $img->getAttribute( 'title' ) )) ) {
+                    if ( !$logo_checker ) {
                         //check page type
                         if ( is_page( $ID ) && !is_home( $ID ) && !is_front_page( $ID ) ) {
                             $alt = '';
@@ -154,7 +152,14 @@ class alm_dom_generator {
                             } elseif ( !empty( alm_get_option( 'pages_images_alt' ) ) && !is_array( alm_get_option( 'pages_images_alt' ) ) ) {
                                 $alt = $options[alm_get_option( 'pages_images_alt' )];
                             }
-                            $img->setAttribute( 'alt', $alt );
+                            //Empty alt option
+                            if ( $generate_empty_alt == 'enabled' && empty( $img->getAttribute( 'alt' ) ) ) {
+                                $img->setAttribute( 'alt', $alt );
+                            } elseif ( $generate_empty_alt == 'enabled' && !empty( $img->getAttribute( 'alt' ) ) ) {
+                                $img->setAttribute( 'alt', $img->getAttribute( 'alt' ) );
+                            } else {
+                                $img->setAttribute( 'alt', $alt );
+                            }
                             //page images title
                             if ( !empty( alm_get_option( 'pages_images_title' ) ) && is_array( alm_get_option( 'pages_images_title' ) ) ) {
                                 foreach ( alm_get_option( 'pages_images_title' ) as $option ) {
@@ -167,7 +172,14 @@ class alm_dom_generator {
                             } elseif ( !empty( alm_get_option( 'pages_images_title' ) ) && !is_array( alm_get_option( 'pages_images_title' ) ) ) {
                                 $title = $options[alm_get_option( 'pages_images_title' )];
                             }
-                            $img->setAttribute( 'title', $title );
+                            //Empty title option
+                            if ( $generate_empty_title == 'enabled' && empty( get_the_title( $attachment_id ) ) ) {
+                                $img->setAttribute( 'title', $title );
+                            } elseif ( $generate_empty_title == 'enabled' && !empty( get_the_title( $attachment_id ) ) ) {
+                                $img->setAttribute( 'title', get_the_title( $attachment_id ) );
+                            } else {
+                                $img->setAttribute( 'title', $title );
+                            }
                         }
                         //check homepage
                         if ( is_home( $ID ) || is_front_page( $ID ) ) {
@@ -189,7 +201,14 @@ class alm_dom_generator {
                                 } elseif ( !empty( alm_get_option( 'home_images_alt' ) ) && !is_array( alm_get_option( 'home_images_alt' ) ) ) {
                                     $alt = $options[alm_get_option( 'home_images_alt' )];
                                 }
-                                $img->setAttribute( 'alt', $alt );
+                                //Empty alt option
+                                if ( $generate_empty_alt == 'enabled' && empty( $img->getAttribute( 'alt' ) ) ) {
+                                    $img->setAttribute( 'alt', $alt );
+                                } elseif ( $generate_empty_alt == 'enabled' && !empty( $img->getAttribute( 'alt' ) ) ) {
+                                    $img->setAttribute( 'alt', $img->getAttribute( 'alt' ) );
+                                } else {
+                                    $img->setAttribute( 'alt', $alt );
+                                }
                                 //Homepage images title
                                 if ( !empty( alm_get_option( 'home_images_title' ) ) && is_array( alm_get_option( 'home_images_title' ) ) ) {
                                     foreach ( alm_get_option( 'home_images_title' ) as $option ) {
@@ -202,7 +221,14 @@ class alm_dom_generator {
                                 } elseif ( !empty( alm_get_option( 'home_images_title' ) ) && !is_array( alm_get_option( 'home_images_title' ) ) ) {
                                     $title = $options[alm_get_option( 'home_images_title' )];
                                 }
-                                $img->setAttribute( 'title', $title );
+                                //Empty title option
+                                if ( $generate_empty_title == 'enabled' && empty( get_the_title( $attachment_id ) ) ) {
+                                    $img->setAttribute( 'title', $title );
+                                } elseif ( $generate_empty_title == 'enabled' && !empty( get_the_title( $attachment_id ) ) ) {
+                                    $img->setAttribute( 'title', get_the_title( $attachment_id ) );
+                                } else {
+                                    $img->setAttribute( 'title', $title );
+                                }
                             }
                         }
                         //check post type
@@ -221,7 +247,14 @@ class alm_dom_generator {
                             } elseif ( !empty( alm_get_option( 'post_images_alt' ) ) && !is_array( alm_get_option( 'post_images_alt' ) ) ) {
                                 $alt = $options[alm_get_option( 'post_images_alt' )];
                             }
-                            $img->setAttribute( 'alt', $alt );
+                            //Empty alt option
+                            if ( $generate_empty_alt == 'enabled' && empty( $img->getAttribute( 'alt' ) ) ) {
+                                $img->setAttribute( 'alt', $alt );
+                            } elseif ( $generate_empty_alt == 'enabled' && !empty( $img->getAttribute( 'alt' ) ) ) {
+                                $img->setAttribute( 'alt', $img->getAttribute( 'alt' ) );
+                            } else {
+                                $img->setAttribute( 'alt', $alt );
+                            }
                             //post images title
                             if ( !empty( alm_get_option( 'post_images_title' ) ) && is_array( alm_get_option( 'post_images_title' ) ) ) {
                                 foreach ( alm_get_option( 'post_images_title' ) as $option ) {
@@ -234,8 +267,14 @@ class alm_dom_generator {
                             } elseif ( !empty( alm_get_option( 'post_images_title' ) ) && !is_array( alm_get_option( 'post_images_title' ) ) ) {
                                 $title = $options[alm_get_option( 'post_images_title' )];
                             }
-                            //
-                            $img->setAttribute( 'title', $title );
+                            //Empty title option
+                            if ( $generate_empty_title == 'enabled' && empty( get_the_title( $attachment_id ) ) ) {
+                                $img->setAttribute( 'title', $title );
+                            } elseif ( $generate_empty_title == 'enabled' && !empty( get_the_title( $attachment_id ) ) ) {
+                                $img->setAttribute( 'title', get_the_title( $attachment_id ) );
+                            } else {
+                                $img->setAttribute( 'title', $title );
+                            }
                         }
                     }
                 }
