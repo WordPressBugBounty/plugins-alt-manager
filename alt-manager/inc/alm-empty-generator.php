@@ -104,7 +104,8 @@ class alm_dom_generator {
                         $img->setAttribute( 'alt', $next_sibling->innertext() );
                     }
                 }
-                if ( !$is_featured && $img->getAttribute( 'class' ) !== 'wpml-ls-flag' || empty( $img->getAttribute( 'alt' ) ) ) {
+                //Check if image is not featured and has no alt
+                if ( !$is_featured && $img->getAttribute( 'class' ) !== 'wpml-ls-flag' && empty( $img->getAttribute( 'alt' ) ) ) {
                     // options
                     $options = [
                         'Site Name'        => get_bloginfo( 'name' ),
@@ -293,3 +294,70 @@ class alm_dom_generator {
 }
 
 $init = new alm_dom_generator();
+add_action( 'wp_footer', function () {
+    if ( is_admin() ) {
+        return;
+    }
+    $ID = get_the_ID();
+    $type = get_post_field( 'post_type', $ID );
+    if ( is_front_page() || is_home() ) {
+        $context = 'home';
+    } elseif ( is_single() && $type === 'post' ) {
+        $context = 'post';
+    } elseif ( $type === 'product' ) {
+        $context = 'product';
+    } elseif ( $type === 'page' ) {
+        $context = 'page';
+    } else {
+        $context = 'cpt';
+    }
+    $replacements = [
+        'Site Name'        => get_bloginfo( 'name' ),
+        'Site Description' => get_bloginfo( 'description' ),
+        'Page Title'       => get_the_title( $ID ),
+        'Post Title'       => get_post_field( 'post_title', $ID ),
+        'Product Title'    => get_post_field( 'post_title', $ID ),
+    ];
+    $alt_keys = alm_get_option( "{$context}_images_alt" );
+    $title_keys = alm_get_option( "{$context}_images_title" );
+    $alt_keys = ( is_array( $alt_keys ) ? $alt_keys : (( !empty( $alt_keys ) ? [$alt_keys] : [] )) );
+    $title_keys = ( is_array( $title_keys ) ? $title_keys : (( !empty( $title_keys ) ? [$title_keys] : [] )) );
+    $alt_final = '';
+    foreach ( $alt_keys as $key ) {
+        $alt_final .= ( isset( $replacements[$key] ) ? $replacements[$key] : $key );
+    }
+    $title_final = '';
+    foreach ( $title_keys as $key ) {
+        $title_final .= ( isset( $replacements[$key] ) ? $replacements[$key] : $key );
+    }
+    // Prevent injection if both are blank
+    if ( empty( $alt_final ) && empty( $title_final ) ) {
+        return;
+    }
+    // Decode for raw readable characters
+    $alt_output = htmlspecialchars_decode( $alt_final, ENT_QUOTES );
+    $title_output = htmlspecialchars_decode( $title_final, ENT_QUOTES );
+    ?>
+	<script>
+	document.addEventListener("DOMContentLoaded", function () {
+		const altText = <?php 
+    echo json_encode( $alt_output );
+    ?>;
+		const titleText = <?php 
+    echo json_encode( $title_output );
+    ?>;
+
+		document.querySelectorAll("img").forEach(function (img) {
+			if (altText.length > 0 &&
+				(!img.hasAttribute("alt") || img.getAttribute("alt").trim() === "")) {
+				img.setAttribute("alt", altText);
+			}
+			if (titleText.length > 0 &&
+				(!img.hasAttribute("title") || img.getAttribute("title").trim() === "")) {
+				img.setAttribute("title", titleText);
+			}
+		});
+	});
+	</script>
+	<?php 
+}, PHP_INT_MAX );
