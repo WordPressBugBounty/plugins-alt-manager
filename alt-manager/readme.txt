@@ -5,7 +5,7 @@ Tags: alt text, image alt, images seo, image alt text, ai
 Requires at least: 2.8.0
 Tested up to: 6.8
 Requires PHP: 5.2.4
-Stable tag: 1.7.5
+Stable tag: 1.7.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 

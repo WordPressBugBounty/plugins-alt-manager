@@ -304,12 +304,8 @@ add_action( 'wp_footer', function () {
         $context = 'home';
     } elseif ( is_single() && $type === 'post' ) {
         $context = 'post';
-    } elseif ( $type === 'product' ) {
-        $context = 'product';
     } elseif ( $type === 'page' ) {
         $context = 'page';
-    } else {
-        $context = 'cpt';
     }
     $replacements = [
         'Site Name'        => get_bloginfo( 'name' ),
@@ -338,26 +334,26 @@ add_action( 'wp_footer', function () {
     $alt_output = htmlspecialchars_decode( $alt_final, ENT_QUOTES );
     $title_output = htmlspecialchars_decode( $title_final, ENT_QUOTES );
     ?>
-	<script>
-	document.addEventListener("DOMContentLoaded", function () {
-		const altText = <?php 
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const altText = <?php 
     echo json_encode( $alt_output );
     ?>;
-		const titleText = <?php 
+            const titleText = <?php 
     echo json_encode( $title_output );
     ?>;
 
-		document.querySelectorAll("img").forEach(function (img) {
-			if (altText.length > 0 &&
-				(!img.hasAttribute("alt") || img.getAttribute("alt").trim() === "")) {
-				img.setAttribute("alt", altText);
-			}
-			if (titleText.length > 0 &&
-				(!img.hasAttribute("title") || img.getAttribute("title").trim() === "")) {
-				img.setAttribute("title", titleText);
-			}
-		});
-	});
-	</script>
-	<?php 
+            document.querySelectorAll("img").forEach(function(img) {
+                if (altText.length > 0 &&
+                    (!img.hasAttribute("alt") || img.getAttribute("alt").trim() === "")) {
+                    img.setAttribute("alt", altText);
+                }
+                if (titleText.length > 0 &&
+                    (!img.hasAttribute("title") || img.getAttribute("title").trim() === "")) {
+                    img.setAttribute("title", titleText);
+                }
+            });
+        });
+    </script>
+<?php 
 }, PHP_INT_MAX );
