@@ -1,11 +1,11 @@
 === Image Alt Text Manager – Bulk & Dynamic Alt Tags For image SEO Optimization + AI ===
 Contributors: wpsaad, arabianmido, freemius
-Tags: alt text, image alt, images seo, image alt text, ai
+Tags: alt, alt text, image alt,  image alt text, ai
 
 Requires at least: 2.8.0
 Tested up to: 6.8
 Requires PHP: 5.2.4
-Stable tag: 1.7.6
+Stable tag: 1.7.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -147,6 +147,11 @@ Make sure you are inspecting image element not a background image.
 3. AI Images Alt & Title Tab
 
 == Changelog ==
+= 1.7.7 =
+* Improved Archive Generation.
+* Optomized Empty Generations.
+= 1.7.6 =
+* Improved Performance
 = 1.7.5 =
 * Added JS Images Detection.
 * Added Only Empty Generation Limits.

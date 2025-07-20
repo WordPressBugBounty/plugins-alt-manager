@@ -60,7 +60,7 @@ class alm_dom_generator {
     }
 
     function alm_init() {
-        if ( !is_singular( array('post', 'page', 'product') ) ) {
+        if ( !(is_singular() || is_archive() || is_home()) || is_admin() ) {
             return;
         }
         function get_content(  $alm_data_generator  ) {
@@ -90,11 +90,36 @@ class alm_dom_generator {
                 $woo_checker = false;
             }
         }
+        //Check Archives
+        if ( is_tax() || is_category() || is_tag() ) {
+            // Get the current taxonomy term
+            $term = get_queried_object();
+            // Get the post types associated with this taxonomy
+            $taxonomy = $term->taxonomy;
+            $taxonomy_object = get_taxonomy( $taxonomy );
+            if ( !empty( $taxonomy_object->object_type ) ) {
+                // object_type can be an array of post types
+                $type = $taxonomy_object->object_type[0];
+                // Usually the main one
+            }
+        }
         if ( is_singular( $types ) && !is_admin() && !empty( $alm_data_generator ) ) {
             foreach ( $html->find( 'img' ) as $img ) {
                 $attachments_ids = $this->alm_posts_attachments_ids();
                 $attachment_id = $this->alm_get_image_id( $img->getAttribute( 'src' ) );
                 $img_classes = explode( ' ', $img->getAttribute( 'class' ) );
+                // Try to find parent <article> of the image if is archive wtih articles
+                $parent_article = $img->parent();
+                while ( $parent_article && $parent_article->tag !== 'article' ) {
+                    $parent_article = $parent_article->parent();
+                }
+                if ( $parent_article ) {
+                    $class_string = $parent_article->getAttribute( 'class' );
+                    if ( preg_match( '/post-(\\d+)/', $class_string, $matches ) ) {
+                        $ID = intval( $matches[1] );
+                        // Now $post_id is the ID from the parent article class like 'post-3756'
+                    }
+                }
                 // Only check if image is featured by class
                 $is_featured = in_array( 'wp-post-image', $img_classes );
                 //WPML Compatibility Custom Alt
@@ -105,7 +130,7 @@ class alm_dom_generator {
                     }
                 }
                 //Check if image is not featured and has no alt
-                if ( !$is_featured && $img->getAttribute( 'class' ) !== 'wpml-ls-flag' && empty( $img->getAttribute( 'alt' ) ) ) {
+                if ( !$is_featured && $img->getAttribute( 'class' ) !== 'wpml-ls-flag' ) {
                     // options
                     $options = [
                         'Site Name'        => get_bloginfo( 'name' ),
@@ -174,10 +199,10 @@ class alm_dom_generator {
                                 $title = $options[alm_get_option( 'pages_images_title' )];
                             }
                             //Empty title option
-                            if ( $generate_empty_title == 'enabled' && empty( get_the_title( $attachment_id ) ) ) {
+                            if ( $generate_empty_title == 'enabled' && empty( $img->getAttribute( 'title' ) ) ) {
                                 $img->setAttribute( 'title', $title );
-                            } elseif ( $generate_empty_title == 'enabled' && !empty( get_the_title( $attachment_id ) ) ) {
-                                $img->setAttribute( 'title', get_the_title( $attachment_id ) );
+                            } elseif ( $generate_empty_title == 'enabled' && !empty( $img->getAttribute( 'title' ) ) ) {
+                                $img->setAttribute( 'title', $img->getAttribute( 'title' ) );
                             } else {
                                 $img->setAttribute( 'title', $title );
                             }
@@ -223,17 +248,17 @@ class alm_dom_generator {
                                     $title = $options[alm_get_option( 'home_images_title' )];
                                 }
                                 //Empty title option
-                                if ( $generate_empty_title == 'enabled' && empty( get_the_title( $attachment_id ) ) ) {
+                                if ( $generate_empty_title == 'enabled' && empty( $img->getAttribute( 'title' ) ) ) {
                                     $img->setAttribute( 'title', $title );
-                                } elseif ( $generate_empty_title == 'enabled' && !empty( get_the_title( $attachment_id ) ) ) {
-                                    $img->setAttribute( 'title', get_the_title( $attachment_id ) );
+                                } elseif ( $generate_empty_title == 'enabled' && !empty( $img->getAttribute( 'title' ) ) ) {
+                                    $img->setAttribute( 'title', $img->getAttribute( 'title' ) );
                                 } else {
                                     $img->setAttribute( 'title', $title );
                                 }
                             }
                         }
                         //check post type
-                        if ( is_single( $ID ) && $type == 'post' ) {
+                        if ( is_single( $ID ) || (is_tax() || is_category() || is_tag()) && $type == 'post' ) {
                             $alt = '';
                             $title = '';
                             //post images alt
@@ -269,10 +294,10 @@ class alm_dom_generator {
                                 $title = $options[alm_get_option( 'post_images_title' )];
                             }
                             //Empty title option
-                            if ( $generate_empty_title == 'enabled' && empty( get_the_title( $attachment_id ) ) ) {
+                            if ( $generate_empty_title == 'enabled' && empty( $img->getAttribute( 'title' ) ) ) {
                                 $img->setAttribute( 'title', $title );
-                            } elseif ( $generate_empty_title == 'enabled' && !empty( get_the_title( $attachment_id ) ) ) {
-                                $img->setAttribute( 'title', get_the_title( $attachment_id ) );
+                            } elseif ( $generate_empty_title == 'enabled' && !empty( $img->getAttribute( 'title' ) ) ) {
+                                $img->setAttribute( 'title', $img->getAttribute( 'title' ) );
                             } else {
                                 $img->setAttribute( 'title', $title );
                             }
