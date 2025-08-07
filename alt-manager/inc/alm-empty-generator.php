@@ -60,7 +60,7 @@ class alm_dom_generator {
     }
 
     function alm_init() {
-        if ( !(is_singular() || is_archive() || is_home()) || is_admin() ) {
+        if ( is_admin() ) {
             return;
         }
         function get_content(  $alm_data_generator  ) {
@@ -163,7 +163,7 @@ class alm_dom_generator {
                     }
                     if ( !$logo_checker ) {
                         //check page type
-                        if ( is_page( $ID ) && !is_home( $ID ) && !is_front_page( $ID ) ) {
+                        if ( is_singular( $types ) || is_archive() || !is_front_page() && is_home() && !is_admin() && !empty( $alm_data_generator ) ) {
                             $alt = '';
                             $title = '';
                             //page images alt

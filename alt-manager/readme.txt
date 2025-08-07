@@ -1,11 +1,11 @@
 === Image Alt Text Manager – Bulk & Dynamic Alt Tags For image SEO Optimization + AI ===
 Contributors: wpsaad, arabianmido, freemius
-Tags: alt, alt text, image alt,  image alt text, ai
+Tags: alt text, image alt, google images, image alt text, ai
 
 Requires at least: 2.8.0
 Tested up to: 6.8
 Requires PHP: 5.2.4
-Stable tag: 1.7.7
+Stable tag: 1.7.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -95,29 +95,31 @@ Automatically bulk change images alt text to dynamic alt tags values related to 
 <li>Improve Your Images SEO performance search engines.</li>
 <li>Compatible with <a href="https://wpml.org/plugin/alt-manager/">WPML.</a></li>
 </ul>
-<p><strong>Got any issues:</strong></p>
-<p>Dont hesitate to contact us via:</p>
-<p><a href="https://wordpress.org/support/plugin/alt-manager/" >Plugin support forums</a> Or <a href="https://wpsaad.com/support/"><strong>Premium Version Support</strong></a></p>
-<p>Also we provide <strong><a href="http://support.motkhases.com/" >a WordPress proffissonal support services</a></strong> with both free and premium plans.</p>
 
-<p><strong><a href="https://wpsaad.com/product/image-alt-text-manager-wordpress-plugin-for-images-seo/" >Upgrade to premium Version</a></strong></p>
+<h3>== Upgrade to Pro ==</h3>
+<p><strong>Generate [product - custom post type] images alt and title and optimize WooCommerce galleries plus AI-powered generation.</strong></p>
+<p><a href="https://wpsaad.com/product/image-alt-text-manager-wordpress-plugin-for-images-seo/" target="_blank">Upgrade to Pro</a></p>
 
-<h3>WPSAAD Free WordPress Plugins</h3>
+<p><strong>💡 Need Help?</strong><br>
+👉 Get support on the <a href="https://wordpress.org/support/plugin/alt-manager/" target="_blank">WordPress.org Support Forum</a><br>
+👉 Access <a href="https://wpsaad.com/support/" target="_blank">Premium Support</a></p>
+<p>🎥 <a href="https://www.youtube.com/@wpsaad" target="_blank">YouTube Channel</a></p>
+
+<h3>== More by WPSaad ==</h3>
 <ul>
- 	<li><a href="https://wordpress.org/plugins/alt-manager/">WordPress Images Alt Manager</a></li>
- 	<li><a href="https://wordpress.org/plugins/custom-product-type-for-woocommerce/">WooCommerce Custom Produdct Type</a></li>
- 	<li><a href="https://wordpress.org/plugins/shipping-manager-for-woocommerce/">WooCommerce Shipping Manager</a></li>
-	<li><a href="https://wordpress.org/plugins/wpsaad-addons-for-dokan-and-elementor/">Addons For Dokan And Elementor</a></li>
-	<li><a href="https://wordpress.org/plugins/bulk-wholsale-dynamic-pricing-buttons-for-woocommerce/">Bulk Wholesale Dynamic Pricing Buttons</a></li>
+  <li>🚚 <a href="https://wordpress.org/plugins/shipping-manager-for-woocommerce/">Shipping Manager for WooCommerce</a> – <a href="https://wpsaad.com/product/shipping-manager-for-woocommerce/" target="_blank">Pro Version</a></li>
+  <li>🧩 <a href="https://wordpress.org/plugins/custom-product-type-for-woocommerce/">Custom Product Type for WooCommerce</a> – <a href="https://wpsaad.com/product/custom-product-type-for-woocommerce/" target="_blank">Pro Version</a></li>
+  <li>🧱 <a href="https://wordpress.org/plugins/wpsaad-addons-for-dokan-and-elementor/">WPSaad Addons for Dokan and Elementor</a> – <a href="https://wpsaad.com/product/wpsaad-addons-for-dokan-and-elementor/" target="_blank">Pro Version</a></li>
+  <li>💲 <a href="https://wordpress.org/plugins/bulk-wholesale-dynamic-pricing-buttons-for-woocommerce/">Bulk Wholesale Dynamic Pricing Buttons</a> – <a href="https://wpsaad.com/product/bulk-wholesale-dynamic-pricing-buttons-for-woocommerce/" target="_blank">Pro Version</a></li>
+  <li>⚙️ <a href="https://wordpress.org/plugins/product-add-ons-custom-fields-booking-extra-options-for-woocommerce/">Product Add-Ons, Custom Fields, Booking & Extra Options</a> – <a href="https://wpsaad.com/product/product-add-ons-custom-fields-booking-extra-options-for-woocommerce/" target="_blank">Pro Version</a></li>
 </ul>
-<h3>WPSAAD Pro WordPress Plugins</h3>
+
+<h3>== Other Services ==</h3>
 <ul>
- 	<li><a href="https://wpsaad.com/product/image-alt-text-manager-wordpress-plugin-for-images-seo/">WordPress Images Alt Manager</a></li>
- 	<li><a href="https://wpsaad.com/product/custom-product-type-for-woocommerce/">WooCommerce Custom Produdct Type</a></li>
- 	<li><a href="https://wpsaad.com/product/shipping-manager-for-woocommerce/">WooCommerce Shipping Manager</a></li>
-	<li><a href="https://wpsaad.com/product/wpsaad-addons-for-dokan-and-elementor/">Addons For Dokan And Elementor</a></li>
-	<li><a href="https://wpsaad.com/product/bulk-wholesale-dynamic-pricing-buttons-for-woocommerce/">Bulk Wholesale Dynamic Pricing Buttons</a></li>
+  <li>🔧 <strong><a href="https://support.motkhases.com/%d8%a3%d9%81%d8%b6%d9%84-%d8%b4%d8%b1%d9%83%d8%a9-%d8%aa%d8%b5%d9%85%d9%8a%d9%85-%d9%85%d9%88%d8%a7%d9%82%d8%b9-%d9%81%d9%8a-%d9%85%d8%b5%d8%b1-%d9%88%d8%a7%d9%84%d9%88%d8%b7%d9%86-%d8%a7%d9%84%d8%b9/" target="_blank"  title="best web design company" aria-label="best web design company">WordPress Design & Development Services</a></strong></li>
+  <li>⚙️ <strong><a href="http://support.motkhases.com/" rel="nofollow ugc">WordPress Professional Support Services</a></strong></li>
 </ul>
+
 
 == Installation ==
 <p>Just install the plugin on your WordPress website and then you will be able to generate, change and manage images Alt and Title text attributes through Image Alt Text Manager settings on admin dashboard.</p>
@@ -149,7 +151,7 @@ Make sure you are inspecting image element not a background image.
 == Changelog ==
 = 1.7.7 =
 * Improved Archive Generation.
-* Optomized Empty Generations.
+* Optimized Empty Generations.
 = 1.7.6 =
 * Improved Performance
 = 1.7.5 =
