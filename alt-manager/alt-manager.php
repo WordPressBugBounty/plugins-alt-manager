@@ -10,7 +10,7 @@
  * Plugin Name: Image Alt Text Manager
  * plugin URI: https://wpsaad.com/alt-manager-wordpress-image-alt-text-plugin/
  * Description:Automatically bulk change images alt text to dynamic alt tags values related to content or media and also generate empty values for both alt and title tags.
- * Version: 1.7.8
+ * Version: 1.8.2
  * Author: WPSAAD
  * Author URI: https://wpsaad.com
  * License: GPLv2 or later
@@ -57,6 +57,11 @@ if ( function_exists( 'am_fs' ) ) {
     }
     //add style
     add_action( 'admin_enqueue_scripts', 'alm_style' );
+    /**
+     * Enqueue admin scripts and styles
+     *
+     * @return void
+     */
     function alm_style() {
         wp_enqueue_script( 'switcher-script', plugins_url( '/assets/js/jquery.switcher.min.js', __FILE__ ) );
         wp_enqueue_style( 'switcher-style', plugins_url( '/assets/css/switcher.css', __FILE__ ) );
@@ -82,7 +87,13 @@ if ( function_exists( 'am_fs' ) ) {
         // wp_enqueue_script('jquery-ui-sortable');
     }
 
-    // Add this helper at the top of your file
+    /**
+     * Get option value (multisite compatible)
+     *
+     * @param string $option  Option name.
+     * @param mixed  $default Default value.
+     * @return mixed Option value.
+     */
     function alm_get_option(  $option, $default = false  ) {
         if ( is_multisite() && is_network_admin() ) {
             return get_site_option( $option, $default );
@@ -90,7 +101,13 @@ if ( function_exists( 'am_fs' ) ) {
         return get_option( $option, $default );
     }
 
-    // ALM fuction to update options in a multisite environment and network admin and single site
+    /**
+     * Update option value (multisite compatible)
+     *
+     * @param string $option Option name.
+     * @param mixed  $value  Option value.
+     * @return bool True on success, false on failure.
+     */
     function alm_update_option(  $option, $value  ) {
         if ( is_multisite() && is_network_admin() ) {
             return update_site_option( $option, $value );
@@ -100,6 +117,11 @@ if ( function_exists( 'am_fs' ) ) {
 
     //load plugin required files
     add_action( 'init', 'alm_load' );
+    /**
+     * Load plugin required files
+     *
+     * @return void
+     */
     function alm_load() {
         require_once plugin_dir_path( __FILE__ ) . 'inc/alm-functions.php';
         require_once plugin_dir_path( __FILE__ ) . 'inc/alm-empty-generator.php';
@@ -119,9 +141,14 @@ if ( function_exists( 'am_fs' ) ) {
     //Activation Hook
     register_activation_hook( __FILE__, array('almActivate', 'activate') );
     add_action( 'admin_init', 'admin_page_functions' );
+    /**
+     * Handle admin page functions and actions
+     *
+     * @return void
+     */
     function admin_page_functions() {
         //Reset Action
-        if ( user_can( get_current_user_id(), 'manage_options' ) && isset( $_REQUEST['reset'] ) && wp_verify_nonce( $_POST['reset_nonce'], 'alm_reset_nonce' ) ) {
+        if ( user_can( get_current_user_id(), 'manage_options' ) && isset( $_REQUEST['reset'] ) && isset( $_POST['reset_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['reset_nonce'] ) ), 'alm_reset_nonce' ) ) {
             $activate_reset = new almActivate();
             $activate_reset->reset();
         }

@@ -21,26 +21,30 @@ add_action( 'network_admin_menu', function () {
     );
 } );
 function alm_settings_admin() {
-    if ( is_network_admin() && isset( $_POST['alm_ai_api_key'] ) ) {
-        if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'alm_ai_api_key_update' ) ) {
-            alm_update_option( 'alm_ai_api_key', sanitize_text_field( $_POST['alm_ai_api_key'] ) );
+    // Handle AI API key saving for both network and single site admin
+    if ( isset( $_POST['alm_ai_api_key'] ) ) {
+        if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ), 'alm_ai_api_key_update' ) ) {
+            alm_update_option( 'alm_ai_api_key', sanitize_text_field( wp_unslash( $_POST['alm_ai_api_key'] ) ) );
+            echo '<div class="updated notice is-dismissible"><p>' . esc_html__( 'AI API Key saved successfully.', 'alt-manager' ) . '</p></div>';
+        } else {
+            echo '<div class="error notice is-dismissible"><p>' . esc_html__( 'Security check failed for AI API Key.', 'alt-manager' ) . '</p></div>';
         }
     }
     // Handle saving in network admin
-    if ( is_network_admin() && $_SERVER['REQUEST_METHOD'] === 'POST' && isset( $_POST['alm_network_settings_nonce'] ) ) {
-        if ( wp_verify_nonce( $_POST['alm_network_settings_nonce'], 'alm_network_settings_save' ) ) {
+    if ( is_network_admin() && isset( $_SERVER['REQUEST_METHOD'] ) && 'POST' === $_SERVER['REQUEST_METHOD'] && isset( $_POST['alm_network_settings_nonce'] ) ) {
+        if ( wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['alm_network_settings_nonce'] ) ), 'alm_network_settings_save' ) ) {
             // Save each option
             alm_update_option( 'only_empty_images_alt', ( isset( $_POST['only_empty_images_alt'] ) ? 'enabled' : '' ) );
             alm_update_option( 'only_empty_images_title', ( isset( $_POST['only_empty_images_title'] ) ? 'enabled' : '' ) );
-            alm_update_option( 'home_images_alt', ( isset( $_POST['home_images_alt'] ) ? (array) $_POST['home_images_alt'] : [] ) );
-            alm_update_option( 'home_images_title', ( isset( $_POST['home_images_title'] ) ? (array) $_POST['home_images_title'] : [] ) );
-            alm_update_option( 'pages_images_alt', ( isset( $_POST['pages_images_alt'] ) ? (array) $_POST['pages_images_alt'] : [] ) );
-            alm_update_option( 'pages_images_title', ( isset( $_POST['pages_images_title'] ) ? (array) $_POST['pages_images_title'] : [] ) );
-            alm_update_option( 'post_images_alt', ( isset( $_POST['post_images_alt'] ) ? (array) $_POST['post_images_alt'] : [] ) );
-            alm_update_option( 'post_images_title', ( isset( $_POST['post_images_title'] ) ? (array) $_POST['post_images_title'] : [] ) );
-            echo '<div class="updated notice is-dismissible"><p>' . __( 'Settings saved.', 'alt-manager' ) . '</p></div>';
+            alm_update_option( 'home_images_alt', ( isset( $_POST['home_images_alt'] ) ? array_map( 'sanitize_text_field', array_map( 'wp_unslash', (array) $_POST['home_images_alt'] ) ) : [] ) );
+            alm_update_option( 'home_images_title', ( isset( $_POST['home_images_title'] ) ? array_map( 'sanitize_text_field', array_map( 'wp_unslash', (array) $_POST['home_images_title'] ) ) : [] ) );
+            alm_update_option( 'pages_images_alt', ( isset( $_POST['pages_images_alt'] ) ? array_map( 'sanitize_text_field', array_map( 'wp_unslash', (array) $_POST['pages_images_alt'] ) ) : [] ) );
+            alm_update_option( 'pages_images_title', ( isset( $_POST['pages_images_title'] ) ? array_map( 'sanitize_text_field', array_map( 'wp_unslash', (array) $_POST['pages_images_title'] ) ) : [] ) );
+            alm_update_option( 'post_images_alt', ( isset( $_POST['post_images_alt'] ) ? array_map( 'sanitize_text_field', array_map( 'wp_unslash', (array) $_POST['post_images_alt'] ) ) : [] ) );
+            alm_update_option( 'post_images_title', ( isset( $_POST['post_images_title'] ) ? array_map( 'sanitize_text_field', array_map( 'wp_unslash', (array) $_POST['post_images_title'] ) ) : [] ) );
+            echo '<div class="updated notice is-dismissible"><p>' . esc_html__( 'Settings saved.', 'alt-manager' ) . '</p></div>';
         } else {
-            echo '<div class="error notice is-dismissible"><p>' . __( 'Security check failed.', 'alt-manager' ) . '</p></div>';
+            echo '<div class="error notice is-dismissible"><p>' . esc_html__( 'Security check failed.', 'alt-manager' ) . '</p></div>';
         }
     }
     $alm_home_options = array(
@@ -183,35 +187,44 @@ function alm_settings_admin() {
     );
     if ( am_fs()->is_not_paying() ) {
         echo '<div class="notice notice-success is-dismissible" style="text-align: center;">';
-        echo '<strong><span style="display: block;margin: 0.5em 0.5em 0 0;clear: both;color: #0f8377;font-size: 1vw;">' . __( 'Get Alt Manager Premium Features', 'alt-manager' ) . '</span></strong>';
+        echo '<strong><span style="display: block;margin: 0.5em 0.5em 0 0;clear: both;color: #0f8377;font-size: 1vw;">' . esc_html__( 'Get Alt Manager Premium Features', 'alt-manager' ) . '</span></strong>';
         echo '<strong><span style="display: block; margin: 0.5em; clear: both;">';
-        echo '<a href="' . am_fs()->get_upgrade_url() . '" style="color: #15375f;">' . __( 'Upgrade Now!', 'alt-manager' ) . '</a>';
+        echo '<a href="' . esc_url( am_fs()->get_upgrade_url() ) . '" style="color: #15375f;">' . esc_html__( 'Upgrade Now!', 'alt-manager' ) . '</a>';
         echo '</span></strong>';
         echo '</div>';
     }
-    $active_tab = ( isset( $_GET['tab'] ) ? $_GET['tab'] : '' );
-    // var_dump($active_tab);
+    $active_tab = ( isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : '' );
     ?>
     <div class="wrap fs-section">
         <h2 class="nav-tab-wrapper">
-            <a href="?page=alt-manager" class="home <?php 
-    echo ( $active_tab == '' ? 'nav-tab-active' : '' );
+            <a href="<?php 
+    echo esc_url( add_query_arg( 'page', 'alt-manager' ) );
+    ?>" class="home <?php 
+    echo esc_attr( ( '' === $active_tab ? 'nav-tab-active' : '' ) );
     ?> nav-tab">Settings</a>
-            <a href="?page=alt-manager&tab=ai_settings" class="<?php 
-    echo ( $active_tab == 'ai_settings' ? 'nav-tab-active' : '' );
+            <a href="<?php 
+    echo esc_url( add_query_arg( array(
+        'page' => 'alt-manager',
+        'tab'  => 'ai_settings',
+    ) ) );
+    ?>" class="<?php 
+    echo esc_attr( ( 'ai_settings' === $active_tab ? 'nav-tab-active' : '' ) );
     ?> nav-tab">AI Settings</a>
-            <a href="?page=alt-manager&tab=ai_generator" class="<?php 
-    echo ( $active_tab == 'ai_generator' ? 'nav-tab-active' : '' );
+            <a href="<?php 
+    echo esc_url( add_query_arg( array(
+        'page' => 'alt-manager',
+        'tab'  => 'ai_generator',
+    ) ) );
+    ?>" class="<?php 
+    echo esc_attr( ( 'ai_generator' === $active_tab ? 'nav-tab-active' : '' ) );
     ?> nav-tab">AI Generator</a>
         </h2>
         <?php 
-    if ( $active_tab == '' ) {
+    if ( '' === $active_tab ) {
         ?>
         <h1 class="alm-heading"><span class="dashicons dashicons-images-alt2"></span>
             <?php 
-        _e( 'Alt Manager Settings', 'alt-manager' );
-        // print_r($alm_home_options);
-        // var_dump(settings_fields('alm_settings'));
+        esc_html_e( 'Alt Manager Settings', 'alt-manager' );
         ?></h1>
 
 
@@ -219,7 +232,6 @@ function alm_settings_admin() {
         echo ( is_network_admin() ? '' : 'options.php' );
         ?>">
             <?php 
-        //  var_dump(alm_get_option('post_images_alt'));
         if ( is_network_admin() ) {
             wp_nonce_field( 'alm_network_settings_save', 'alm_network_settings_nonce' );
         } else {
@@ -231,11 +243,11 @@ function alm_settings_admin() {
             <table class="form-table">
                 <tr>
                     <th scope="row" ><strong><?php 
-        _e( 'Generate Only Empty Alt', 'alt-manager' );
+        esc_html_e( 'Generate Only Empty Alt', 'alt-manager' );
         ?></strong></th>   
                     <td >
                         <?php 
-        if ( alm_get_option( 'only_empty_images_alt' ) == 'enabled' ) {
+        if ( 'enabled' === alm_get_option( 'only_empty_images_alt' ) ) {
             ?>
                             <input id="empty_status" type="checkbox" name="only_empty_images_alt" value="enabled" checked>
 
@@ -252,11 +264,11 @@ function alm_settings_admin() {
                 </tr>
                 <tr>
                     <th scope="row"><strong><?php 
-        _e( 'Generate Only Empty Title', 'alt-manager' );
+        esc_html_e( 'Generate Only Empty Title', 'alt-manager' );
         ?></strong></th>
                     <td colspan="2">
                         <?php 
-        if ( alm_get_option( 'only_empty_images_title' ) == 'enabled' ) {
+        if ( 'enabled' === alm_get_option( 'only_empty_images_title' ) ) {
             ?>
                             <input id="empty_status" type="checkbox" name="only_empty_images_title" value="enabled" checked>
 
@@ -274,31 +286,30 @@ function alm_settings_admin() {
                 <tr valign="bottom">
                     <th colspan="2">
                         <h3><?php 
-        _e( 'Homepage Images Settings', 'alt-manager' );
+        esc_html_e( 'Homepage Images Settings', 'alt-manager' );
         ?></h3>
                     </th>
                 </tr>
                 <tr valign="top">
                     <th scope="row"><?php 
-        _e( 'Home Images Alt', 'alt-manager' );
+        esc_html_e( 'Home Images Alt', 'alt-manager' );
         ?></th>
                     <td>
                         <select name="home_images_alt[]" class="home-images-alt" multiple="multiple">
 
                             <?php 
-        // var_dump(alm_get_option('home_images_alt'));
         if ( !empty( alm_get_option( 'home_images_alt' ) ) && is_array( alm_get_option( 'home_images_alt' ) ) ) {
             foreach ( alm_get_option( 'home_images_alt' ) as $option ) {
-                echo '<option value="' . esc_attr( $alm_home_options[$option]['value'] ) . '" selected="selected">' . $alm_home_options[$option]['text'] . '</option>';
+                echo '<option value="' . esc_attr( $alm_home_options[$option]['value'] ) . '" selected="selected">' . esc_html( $alm_home_options[$option]['text'] ) . '</option>';
             }
         } elseif ( !empty( alm_get_option( 'home_images_alt' ) ) && !is_array( alm_get_option( 'home_images_alt' ) ) ) {
-            echo '<option value="' . esc_attr( $alm_home_options[alm_get_option( 'home_images_alt' )]['value'] ) . '" selected="selected">' . $alm_home_options[alm_get_option( 'home_images_alt' )]['text'] . '</option>';
+            echo '<option value="' . esc_attr( $alm_home_options[alm_get_option( 'home_images_alt' )]['value'] ) . '" selected="selected">' . esc_html( $alm_home_options[alm_get_option( 'home_images_alt' )]['text'] ) . '</option>';
         }
         foreach ( $alm_home_options as $option ) {
             if ( is_array( alm_get_option( 'home_images_alt' ) ) && !in_array( $option['value'], alm_get_option( 'home_images_alt' ) ) ) {
-                echo '<option value="' . esc_attr( $option['value'] ) . '" >' . $option['text'] . '</option>';
+                echo '<option value="' . esc_attr( $option['value'] ) . '">' . esc_html( $option['text'] ) . '</option>';
             } elseif ( !is_array( alm_get_option( 'home_images_alt' ) ) && alm_get_option( 'home_images_alt' ) !== $option['value'] ) {
-                echo '<option value="' . esc_attr( $option['value'] ) . '" >' . $option['text'] . '</option>';
+                echo '<option value="' . esc_attr( $option['value'] ) . '">' . esc_html( $option['text'] ) . '</option>';
             }
         }
         ?>
@@ -309,39 +320,25 @@ function alm_settings_admin() {
                 </tr>
                 <tr valign="top">
                     <th scope="row"><?php 
-        _e( 'Home Images Title', 'alt-manager' );
+        esc_html_e( 'Home Images Title', 'alt-manager' );
         ?></th>
                     <td>
                         <select name="home_images_title[]" class="home-images-title" multiple="multiple">
                             <?php 
         if ( !empty( alm_get_option( 'home_images_title' ) ) && is_array( alm_get_option( 'home_images_title' ) ) ) {
             foreach ( alm_get_option( 'home_images_title' ) as $option ) {
-                echo '<option value="' . esc_attr( $alm_home_options[$option]['value'] ) . '" selected="selected">' . $alm_home_options[$option]['text'] . '</option>';
+                echo '<option value="' . esc_attr( $alm_home_options[$option]['value'] ) . '" selected="selected">' . esc_html( $alm_home_options[$option]['text'] ) . '</option>';
             }
         } elseif ( !empty( alm_get_option( 'home_images_title' ) ) && !is_array( alm_get_option( 'home_images_title' ) ) ) {
-            echo '<option value="' . esc_attr( $alm_home_options[alm_get_option( 'home_images_title' )]['value'] ) . '" selected="selected">' . $alm_home_options[alm_get_option( 'home_images_title' )]['text'] . '</option>';
+            echo '<option value="' . esc_attr( $alm_home_options[alm_get_option( 'home_images_title' )]['value'] ) . '" selected="selected">' . esc_html( $alm_home_options[alm_get_option( 'home_images_title' )]['text'] ) . '</option>';
         }
         foreach ( $alm_home_options as $option ) {
             if ( is_array( alm_get_option( 'home_images_title' ) ) && !in_array( $option['value'], alm_get_option( 'home_images_title' ) ) ) {
-                echo '<option value="' . esc_attr( $option['value'] ) . '" >' . $option['text'] . '</option>';
+                echo '<option value="' . esc_attr( $option['value'] ) . '">' . esc_html( $option['text'] ) . '</option>';
             } elseif ( !is_array( alm_get_option( 'home_images_title' ) ) && alm_get_option( 'home_images_title' ) !== $option['value'] ) {
-                echo '<option value="' . esc_attr( $option['value'] ) . '" >' . $option['text'] . '</option>';
+                echo '<option value="' . esc_attr( $option['value'] ) . '">' . esc_html( $option['text'] ) . '</option>';
             }
         }
-        // echo  '<option value="' . esc_attr( $alm_home_options[alm_get_option( 'home_images_title' )]['value'] ) . '" selected="selected">' . $alm_home_options[alm_get_option( 'home_images_title' )]['text'] . '</option>' ;
-        // if ( !empty(alm_get_option( 'home_images_title' )) && is_array( alm_get_option( 'home_images_title' ) ) ) {
-        //     foreach ( $alm_home_options as $option ) {
-        //         if ( !in_array( $option['value'], alm_get_option( 'home_images_title' ) ) ) {
-        //             echo  '<option value="' . esc_attr( $option['value'] ) . '">' . $option['text'] . '</option>' ;
-        //         }
-        //     }
-        //     } elseif ( !empty(alm_get_option( 'home_images_title' )) && !is_array( alm_get_option( 'home_images_title' ) ) ) {
-        //         foreach ( $alm_home_options as $option ) {
-        //             if ( $option['value'] !==   alm_get_option( 'home_images_title' )) {
-        //                 echo  '<option value="' . esc_attr( $option['value'] ) . '">' . $option['text'] . '</option>' ;
-        //             }
-        //         }
-        //     }
         ?>
 
                         </select>
@@ -351,38 +348,38 @@ function alm_settings_admin() {
                 <tr>
                     <td colspan="2">
                         <p><strong><?php 
-        _e( 'Note: ', 'alt-manager' );
+        esc_html_e( 'Note: ', 'alt-manager' );
         ?></strong><?php 
-        _e( 'If homepage is set to Your latest posts alt and title will be site name by default.', 'alt-manager' );
+        esc_html_e( 'If homepage is set to Your latest posts alt and title will be site name by default.', 'alt-manager' );
         ?> </p>
                     </td>
                 </tr>
                 <tr valign="bottom">
                     <th colspan="2">
                         <h3><?php 
-        _e( 'Pages Images Settings', 'alt-manager' );
+        esc_html_e( 'Pages Images Settings', 'alt-manager' );
         ?></h3>
                     </th>
                 </tr>
                 <tr valign="top">
                     <th scope="row"><?php 
-        _e( 'Pages Images Alt', 'alt-manager' );
+        esc_html_e( 'Pages Images Alt', 'alt-manager' );
         ?></th>
                     <td>
                         <select name="pages_images_alt[]" class="pages-images-alt" multiple="multiple">
                             <?php 
         if ( !empty( alm_get_option( 'pages_images_alt' ) ) && is_array( alm_get_option( 'pages_images_alt' ) ) ) {
             foreach ( alm_get_option( 'pages_images_alt' ) as $option ) {
-                echo '<option value="' . esc_attr( $alm_pages_options[$option]['value'] ) . '" selected="selected">' . $alm_pages_options[$option]['text'] . '</option>';
+                echo '<option value="' . esc_attr( $alm_pages_options[$option]['value'] ) . '" selected="selected">' . esc_html( $alm_pages_options[$option]['text'] ) . '</option>';
             }
         } elseif ( !empty( alm_get_option( 'pages_images_alt' ) ) && !is_array( alm_get_option( 'pages_images_alt' ) ) ) {
-            echo '<option value="' . esc_attr( $alm_pages_options[alm_get_option( 'pages_images_alt' )]['value'] ) . '" selected="selected">' . $alm_pages_options[alm_get_option( 'pages_images_alt' )]['text'] . '</option>';
+            echo '<option value="' . esc_attr( $alm_pages_options[alm_get_option( 'pages_images_alt' )]['value'] ) . '" selected="selected">' . esc_html( $alm_pages_options[alm_get_option( 'pages_images_alt' )]['text'] ) . '</option>';
         }
         foreach ( $alm_pages_options as $option ) {
             if ( is_array( alm_get_option( 'pages_images_alt' ) ) && !in_array( $option['value'], alm_get_option( 'pages_images_alt' ) ) ) {
-                echo '<option value="' . esc_attr( $option['value'] ) . '" >' . $option['text'] . '</option>';
+                echo '<option value="' . esc_attr( $option['value'] ) . '">' . esc_html( $option['text'] ) . '</option>';
             } elseif ( !is_array( alm_get_option( 'pages_images_alt' ) ) && alm_get_option( 'pages_images_alt' ) !== $option['value'] ) {
-                echo '<option value="' . esc_attr( $option['value'] ) . '" >' . $option['text'] . '</option>';
+                echo '<option value="' . esc_attr( $option['value'] ) . '">' . esc_html( $option['text'] ) . '</option>';
             }
         }
         ?>
@@ -393,23 +390,23 @@ function alm_settings_admin() {
                 </tr>
                 <tr valign="top">
                     <th scope="row"><?php 
-        _e( 'Pages Images Title', 'alt-manager' );
+        esc_html_e( 'Pages Images Title', 'alt-manager' );
         ?></th>
                     <td>
                         <select name="pages_images_title[]" class="pages-images-title" multiple="multiple">
                             <?php 
         if ( !empty( alm_get_option( 'pages_images_title' ) ) && is_array( alm_get_option( 'pages_images_title' ) ) ) {
             foreach ( alm_get_option( 'pages_images_title' ) as $option ) {
-                echo '<option value="' . esc_attr( $alm_pages_options[$option]['value'] ) . '" selected="selected">' . $alm_pages_options[$option]['text'] . '</option>';
+                echo '<option value="' . esc_attr( $alm_pages_options[$option]['value'] ) . '" selected="selected">' . esc_html( $alm_pages_options[$option]['text'] ) . '</option>';
             }
         } elseif ( !empty( alm_get_option( 'pages_images_title' ) ) && !is_array( alm_get_option( 'pages_images_title' ) ) ) {
-            echo '<option value="' . esc_attr( $alm_pages_options[alm_get_option( 'pages_images_title' )]['value'] ) . '" selected="selected">' . $alm_pages_options[alm_get_option( 'pages_images_title' )]['text'] . '</option>';
+            echo '<option value="' . esc_attr( $alm_pages_options[alm_get_option( 'pages_images_title' )]['value'] ) . '" selected="selected">' . esc_html( $alm_pages_options[alm_get_option( 'pages_images_title' )]['text'] ) . '</option>';
         }
         foreach ( $alm_pages_options as $option ) {
             if ( is_array( alm_get_option( 'pages_images_title' ) ) && !in_array( $option['value'], alm_get_option( 'pages_images_title' ) ) ) {
-                echo '<option value="' . esc_attr( $option['value'] ) . '" >' . $option['text'] . '</option>';
+                echo '<option value="' . esc_attr( $option['value'] ) . '">' . esc_html( $option['text'] ) . '</option>';
             } elseif ( !is_array( alm_get_option( 'pages_images_title' ) ) && alm_get_option( 'pages_images_title' ) !== $option['value'] ) {
-                echo '<option value="' . esc_attr( $option['value'] ) . '" >' . $option['text'] . '</option>';
+                echo '<option value="' . esc_attr( $option['value'] ) . '">' . esc_html( $option['text'] ) . '</option>';
             }
         }
         ?>
@@ -419,29 +416,29 @@ function alm_settings_admin() {
                 <tr valign="bottom">
                     <th colspan="2">
                         <h3><?php 
-        _e( 'Posts Images Settings', 'alt-manager' );
+        esc_html_e( 'Posts Images Settings', 'alt-manager' );
         ?></h3>
                     </th>
                 </tr>
                 <tr valign="top">
                     <th scope="row"><?php 
-        _e( 'Posts Images Alt', 'alt-manager' );
+        esc_html_e( 'Posts Images Alt', 'alt-manager' );
         ?></th>
                     <td>
                         <select name="post_images_alt[]" class="post-images-alt" multiple="multiple">
                             <?php 
         if ( !empty( alm_get_option( 'post_images_alt' ) ) && is_array( alm_get_option( 'post_images_alt' ) ) ) {
             foreach ( alm_get_option( 'post_images_alt' ) as $option ) {
-                echo '<option value="' . esc_attr( $alm_post_options[$option]['value'] ) . '" selected="selected">' . $alm_post_options[$option]['text'] . '</option>';
+                echo '<option value="' . esc_attr( $alm_post_options[$option]['value'] ) . '" selected="selected">' . esc_html( $alm_post_options[$option]['text'] ) . '</option>';
             }
         } elseif ( !empty( alm_get_option( 'post_images_alt' ) ) && !is_array( alm_get_option( 'post_images_alt' ) ) ) {
-            echo '<option value="' . esc_attr( $alm_post_options[alm_get_option( 'post_images_alt' )]['value'] ) . '" selected="selected">' . $alm_post_options[alm_get_option( 'post_images_alt' )]['text'] . '</option>';
+            echo '<option value="' . esc_attr( $alm_post_options[alm_get_option( 'post_images_alt' )]['value'] ) . '" selected="selected">' . esc_html( $alm_post_options[alm_get_option( 'post_images_alt' )]['text'] ) . '</option>';
         }
         foreach ( $alm_post_options as $option ) {
             if ( is_array( alm_get_option( 'post_images_alt' ) ) && !in_array( $option['value'], alm_get_option( 'post_images_alt' ) ) ) {
-                echo '<option value="' . esc_attr( $option['value'] ) . '" >' . $option['text'] . '</option>';
+                echo '<option value="' . esc_attr( $option['value'] ) . '">' . esc_html( $option['text'] ) . '</option>';
             } elseif ( !is_array( alm_get_option( 'post_images_alt' ) ) && alm_get_option( 'post_images_alt' ) !== $option['value'] ) {
-                echo '<option value="' . esc_attr( $option['value'] ) . '" >' . $option['text'] . '</option>';
+                echo '<option value="' . esc_attr( $option['value'] ) . '">' . esc_html( $option['text'] ) . '</option>';
             }
         }
         ?>
@@ -452,23 +449,23 @@ function alm_settings_admin() {
                 </tr>
                 <tr valign="top">
                     <th scope="row"><?php 
-        _e( 'Posts Images Title', 'alt-manager' );
+        esc_html_e( 'Posts Images Title', 'alt-manager' );
         ?></th>
                     <td>
                         <select name="post_images_title[]" class="post-images-title" multiple="multiple">
                             <?php 
         if ( !empty( alm_get_option( 'post_images_title' ) ) && is_array( alm_get_option( 'post_images_title' ) ) ) {
             foreach ( alm_get_option( 'post_images_title' ) as $option ) {
-                echo '<option value="' . esc_attr( $alm_post_options[$option]['value'] ) . '" selected="selected">' . $alm_post_options[$option]['text'] . '</option>';
+                echo '<option value="' . esc_attr( $alm_post_options[$option]['value'] ) . '" selected="selected">' . esc_html( $alm_post_options[$option]['text'] ) . '</option>';
             }
         } elseif ( !empty( alm_get_option( 'post_images_title' ) ) && !is_array( alm_get_option( 'post_images_title' ) ) ) {
-            echo '<option value="' . esc_attr( $alm_post_options[alm_get_option( 'post_images_title' )]['value'] ) . '" selected="selected">' . $alm_post_options[alm_get_option( 'post_images_title' )]['text'] . '</option>';
+            echo '<option value="' . esc_attr( $alm_post_options[alm_get_option( 'post_images_title' )]['value'] ) . '" selected="selected">' . esc_html( $alm_post_options[alm_get_option( 'post_images_title' )]['text'] ) . '</option>';
         }
         foreach ( $alm_post_options as $option ) {
             if ( is_array( alm_get_option( 'post_images_title' ) ) && !in_array( $option['value'], alm_get_option( 'post_images_title' ) ) ) {
-                echo '<option value="' . esc_attr( $option['value'] ) . '" >' . $option['text'] . '</option>';
+                echo '<option value="' . esc_attr( $option['value'] ) . '">' . esc_html( $option['text'] ) . '</option>';
             } elseif ( !is_array( alm_get_option( 'post_images_title' ) ) && alm_get_option( 'post_images_title' ) !== $option['value'] ) {
-                echo '<option value="' . esc_attr( $option['value'] ) . '" >' . $option['text'] . '</option>';
+                echo '<option value="' . esc_attr( $option['value'] ) . '">' . esc_html( $option['text'] ) . '</option>';
             }
         }
         ?>
@@ -481,41 +478,41 @@ function alm_settings_admin() {
                     <tr valign="bottom">
                         <th colspan="2">
                             <h3><?php 
-        _e( 'Products Images Settings', 'alt-manager' );
+        esc_html_e( 'Products Images Settings', 'alt-manager' );
         ?></h3>
                         </th>
                     </tr>
                     <tr valign="top">
                         <th scope="row"><?php 
-        _e( 'Products Images Alt', 'alt-manager' );
+        esc_html_e( 'Products Images Alt', 'alt-manager' );
         ?></th>
                         <td>
                             <select name="product_images_alt[]" class="product-images-alt" multiple="multiple" disabled>
                                 <option><?php 
-        _e( 'Available in Premium', 'alt-manager' );
+        esc_html_e( 'Available in Premium', 'alt-manager' );
         ?></option>
                             </select>
                             <p><a href="<?php 
-        echo am_fs()->get_upgrade_url();
+        echo esc_url( am_fs()->get_upgrade_url() );
         ?>"><?php 
-        _e( 'Upgrade to Premium', 'alt-manager' );
+        esc_html_e( 'Upgrade to Premium', 'alt-manager' );
         ?></a></p>
                         </td>
                     </tr>
                     <tr valign="top">
                         <th scope="row"><?php 
-        _e( 'Products Images Title', 'alt-manager' );
+        esc_html_e( 'Products Images Title', 'alt-manager' );
         ?></th>
                         <td>
                             <select name="product_images_title[]" class="product-images-title" multiple="multiple" disabled>
                                 <option><?php 
-        _e( 'Available in Premium', 'alt-manager' );
+        esc_html_e( 'Available in Premium', 'alt-manager' );
         ?></option>
                             </select>
                             <p><a href="<?php 
-        echo am_fs()->get_upgrade_url();
+        echo esc_url( am_fs()->get_upgrade_url() );
         ?>"><?php 
-        _e( 'Upgrade to Premium', 'alt-manager' );
+        esc_html_e( 'Upgrade to Premium', 'alt-manager' );
         ?></a></p>
                         </td>
                     </tr>
@@ -523,41 +520,41 @@ function alm_settings_admin() {
                     <tr valign="bottom">
                         <th colspan="2">
                             <h3><?php 
-        _e( 'Custom Post Type Images Settings', 'alt-manager' );
+        esc_html_e( 'Custom Post Type Images Settings', 'alt-manager' );
         ?></h3>
                         </th>
                     </tr>
                     <tr valign="top">
                         <th scope="row"><?php 
-        _e( 'Custom Post Type Images Alt', 'alt-manager' );
+        esc_html_e( 'Custom Post Type Images Alt', 'alt-manager' );
         ?></th>
                         <td>
                             <select name="cpt_images_alt[]" class="cpt-images-alt" multiple="multiple" disabled>
                                 <option><?php 
-        _e( 'Available in Premium', 'alt-manager' );
+        esc_html_e( 'Available in Premium', 'alt-manager' );
         ?></option>
                             </select>
                             <p><a href="<?php 
-        echo am_fs()->get_upgrade_url();
+        echo esc_url( am_fs()->get_upgrade_url() );
         ?>"><?php 
-        _e( 'Upgrade to Premium', 'alt-manager' );
+        esc_html_e( 'Upgrade to Premium', 'alt-manager' );
         ?></a></p>
                         </td>
                     </tr>
                     <tr valign="top">
                         <th scope="row"><?php 
-        _e( 'Custom Post Type Images Title', 'alt-manager' );
+        esc_html_e( 'Custom Post Type Images Title', 'alt-manager' );
         ?></th>
                         <td>
                             <select name="cpt_images_title[]" class="cpt-images-title" multiple="multiple" disabled>
                                 <option><?php 
-        _e( 'Available in Premium', 'alt-manager' );
+        esc_html_e( 'Available in Premium', 'alt-manager' );
         ?></option>
                             </select>
                             <p><a href="<?php 
-        echo am_fs()->get_upgrade_url();
+        echo esc_url( am_fs()->get_upgrade_url() );
         ?>"><?php 
-        _e( 'Upgrade to Premium', 'alt-manager' );
+        esc_html_e( 'Upgrade to Premium', 'alt-manager' );
         ?></a></p>
                         </td>
                     </tr>
@@ -577,27 +574,27 @@ function alm_settings_admin() {
         ?>
         </form>
         <?php 
-    } elseif ( $active_tab == 'ai_settings' ) {
+    } elseif ( 'ai_settings' === $active_tab ) {
         ?>
                 <div class="notice notice-warning">
                     <p><?php 
-        _e( 'AI Settings are available for premium users only.', 'alt-manager' );
+        esc_html_e( 'AI Settings are available for premium users only.', 'alt-manager' );
         ?> <a href="<?php 
-        echo am_fs()->get_upgrade_url();
+        echo esc_url( am_fs()->get_upgrade_url() );
         ?>"><?php 
-        _e( 'Upgrade Now!', 'alt-manager' );
+        esc_html_e( 'Upgrade Now!', 'alt-manager' );
         ?></a></p>
                 </div>
             <?php 
-    } elseif ( $active_tab == 'ai_generator' ) {
+    } elseif ( 'ai_generator' === $active_tab ) {
         ?>
                 <div class="notice notice-warning">
                 <p><?php 
-        _e( 'AI Generation are available for premium users only.', 'alt-manager' );
+        esc_html_e( 'AI Generation are available for premium users only.', 'alt-manager' );
         ?> <a href="<?php 
-        echo am_fs()->get_upgrade_url();
+        echo esc_url( am_fs()->get_upgrade_url() );
         ?>"><?php 
-        _e( 'Upgrade Now!', 'alt-manager' );
+        esc_html_e( 'Upgrade Now!', 'alt-manager' );
         ?></a></p>
                 </div>
             <?php 

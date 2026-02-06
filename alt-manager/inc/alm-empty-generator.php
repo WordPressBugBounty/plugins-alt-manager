@@ -108,6 +108,10 @@ class alm_dom_generator {
                 $attachments_ids = $this->alm_posts_attachments_ids();
                 $attachment_id = $this->alm_get_image_id( $img->getAttribute( 'src' ) );
                 $img_classes = explode( ' ', $img->getAttribute( 'class' ) );
+                // Store original page ID for homepage checks
+                $original_page_id = $ID;
+                $extracted_post_type = $type;
+                // Default to original type
                 // Try to find parent <article> of the image if is archive wtih articles
                 $parent_article = $img->parent();
                 while ( $parent_article && $parent_article->tag !== 'article' ) {
@@ -116,21 +120,28 @@ class alm_dom_generator {
                 if ( $parent_article ) {
                     $class_string = $parent_article->getAttribute( 'class' );
                     if ( preg_match( '/post-(\\d+)/', $class_string, $matches ) ) {
-                        $ID = intval( $matches[1] );
-                        // Now $post_id is the ID from the parent article class like 'post-3756'
+                        $extracted_id = intval( $matches[1] );
+                        $extracted_post_type = get_post_field( 'post_type', $extracted_id );
+                        // Update $ID for type checks, but keep original_page_id for homepage checks
+                        $ID = $extracted_id;
+                        // Now $ID is the ID from the parent article class like 'post-3756'
                     }
                 }
                 // Only check if image is featured by class
                 $is_featured = in_array( 'wp-post-image', $img_classes );
                 //WPML Compatibility Custom Alt
-                if ( $img->getAttribute( 'class' ) == 'wpml-ls-flag' ) {
+                if ( 'wpml-ls-flag' === $img->getAttribute( 'class' ) ) {
                     $next_sibling = $img->next_sibling();
                     if ( !empty( $next_sibling->innertext() ) ) {
                         $img->setAttribute( 'alt', $next_sibling->innertext() );
                     }
                 }
+                // Check if image already has alt/title set by alm-functions.php - skip if already set
+                $has_alt = $img->hasAttribute( 'alt' ) && !empty( trim( $img->getAttribute( 'alt' ) ) );
+                $has_title = $img->hasAttribute( 'title' ) && !empty( trim( $img->getAttribute( 'title' ) ) );
                 //Check if image is not featured and has no alt
-                if ( !$is_featured && $img->getAttribute( 'class' ) !== 'wpml-ls-flag' ) {
+                // Skip if already processed by alm-functions.php (has both alt and title)
+                if ( !$is_featured && $img->getAttribute( 'class' ) !== 'wpml-ls-flag' && !($has_alt && $has_title) ) {
                     // options
                     $options = [
                         'Site Name'        => get_bloginfo( 'name' ),
@@ -179,9 +190,9 @@ class alm_dom_generator {
                                 $alt = $options[alm_get_option( 'pages_images_alt' )];
                             }
                             //Empty alt option
-                            if ( $generate_empty_alt == 'enabled' && empty( $img->getAttribute( 'alt' ) ) ) {
+                            if ( 'enabled' === $generate_empty_alt && empty( $img->getAttribute( 'alt' ) ) ) {
                                 $img->setAttribute( 'alt', $alt );
-                            } elseif ( $generate_empty_alt == 'enabled' && !empty( $img->getAttribute( 'alt' ) ) ) {
+                            } elseif ( 'enabled' === $generate_empty_alt && !empty( $img->getAttribute( 'alt' ) ) ) {
                                 $img->setAttribute( 'alt', $img->getAttribute( 'alt' ) );
                             } else {
                                 $img->setAttribute( 'alt', $alt );
@@ -199,19 +210,21 @@ class alm_dom_generator {
                                 $title = $options[alm_get_option( 'pages_images_title' )];
                             }
                             //Empty title option
-                            if ( $generate_empty_title == 'enabled' && empty( $img->getAttribute( 'title' ) ) ) {
+                            if ( 'enabled' === $generate_empty_title && empty( $img->getAttribute( 'title' ) ) ) {
                                 $img->setAttribute( 'title', $title );
-                            } elseif ( $generate_empty_title == 'enabled' && !empty( $img->getAttribute( 'title' ) ) ) {
+                            } elseif ( 'enabled' === $generate_empty_title && !empty( $img->getAttribute( 'title' ) ) ) {
                                 $img->setAttribute( 'title', $img->getAttribute( 'title' ) );
                             } else {
                                 $img->setAttribute( 'title', $title );
                             }
                         }
-                        //check homepage
-                        if ( is_home( $ID ) || is_front_page( $ID ) ) {
+                        //check homepage - use original page ID, not extracted product ID
+                        // Also skip if this is a product image (products should use product settings, not homepage)
+                        if ( (is_home() || is_front_page()) && $extracted_post_type != 'product' ) {
+                            //check if post for pages only
                             $alt = '';
                             $title = '';
-                            if ( alm_get_option( 'show_on_front' ) != 'page' && !empty( alm_get_option( 'show_on_front' ) ) ) {
+                            if ( 'page' !== alm_get_option( 'show_on_front' ) && !empty( alm_get_option( 'show_on_front' ) ) ) {
                                 $img->setAttribute( 'alt', $options['Site Name'] );
                                 $img->setAttribute( 'title', $options['Site Name'] );
                             } else {
@@ -228,9 +241,9 @@ class alm_dom_generator {
                                     $alt = $options[alm_get_option( 'home_images_alt' )];
                                 }
                                 //Empty alt option
-                                if ( $generate_empty_alt == 'enabled' && empty( $img->getAttribute( 'alt' ) ) ) {
+                                if ( 'enabled' === $generate_empty_alt && empty( $img->getAttribute( 'alt' ) ) ) {
                                     $img->setAttribute( 'alt', $alt );
-                                } elseif ( $generate_empty_alt == 'enabled' && !empty( $img->getAttribute( 'alt' ) ) ) {
+                                } elseif ( 'enabled' === $generate_empty_alt && !empty( $img->getAttribute( 'alt' ) ) ) {
                                     $img->setAttribute( 'alt', $img->getAttribute( 'alt' ) );
                                 } else {
                                     $img->setAttribute( 'alt', $alt );
@@ -248,9 +261,9 @@ class alm_dom_generator {
                                     $title = $options[alm_get_option( 'home_images_title' )];
                                 }
                                 //Empty title option
-                                if ( $generate_empty_title == 'enabled' && empty( $img->getAttribute( 'title' ) ) ) {
+                                if ( 'enabled' === $generate_empty_title && empty( $img->getAttribute( 'title' ) ) ) {
                                     $img->setAttribute( 'title', $title );
-                                } elseif ( $generate_empty_title == 'enabled' && !empty( $img->getAttribute( 'title' ) ) ) {
+                                } elseif ( 'enabled' === $generate_empty_title && !empty( $img->getAttribute( 'title' ) ) ) {
                                     $img->setAttribute( 'title', $img->getAttribute( 'title' ) );
                                 } else {
                                     $img->setAttribute( 'title', $title );
@@ -258,7 +271,7 @@ class alm_dom_generator {
                             }
                         }
                         //check post type
-                        if ( is_single( $ID ) || (is_tax() || is_category() || is_tag()) && $type == 'post' ) {
+                        if ( is_single( $ID ) || (is_tax() || is_category() || is_tag()) && 'post' === $type ) {
                             $alt = '';
                             $title = '';
                             //post images alt
@@ -274,9 +287,9 @@ class alm_dom_generator {
                                 $alt = $options[alm_get_option( 'post_images_alt' )];
                             }
                             //Empty alt option
-                            if ( $generate_empty_alt == 'enabled' && empty( $img->getAttribute( 'alt' ) ) ) {
+                            if ( 'enabled' === $generate_empty_alt && empty( $img->getAttribute( 'alt' ) ) ) {
                                 $img->setAttribute( 'alt', $alt );
-                            } elseif ( $generate_empty_alt == 'enabled' && !empty( $img->getAttribute( 'alt' ) ) ) {
+                            } elseif ( 'enabled' === $generate_empty_alt && !empty( $img->getAttribute( 'alt' ) ) ) {
                                 $img->setAttribute( 'alt', $img->getAttribute( 'alt' ) );
                             } else {
                                 $img->setAttribute( 'alt', $alt );
@@ -294,9 +307,9 @@ class alm_dom_generator {
                                 $title = $options[alm_get_option( 'post_images_title' )];
                             }
                             //Empty title option
-                            if ( $generate_empty_title == 'enabled' && empty( $img->getAttribute( 'title' ) ) ) {
+                            if ( 'enabled' === $generate_empty_title && empty( $img->getAttribute( 'title' ) ) ) {
                                 $img->setAttribute( 'title', $title );
-                            } elseif ( $generate_empty_title == 'enabled' && !empty( $img->getAttribute( 'title' ) ) ) {
+                            } elseif ( 'enabled' === $generate_empty_title && !empty( $img->getAttribute( 'title' ) ) ) {
                                 $img->setAttribute( 'title', $img->getAttribute( 'title' ) );
                             } else {
                                 $img->setAttribute( 'title', $title );
@@ -307,7 +320,7 @@ class alm_dom_generator {
             }
             // $html = $alm_content->saveHtml();
             // fb-edit query param to add fushion builder compatibility
-            if ( wp_doing_ajax() || isset( $_GET['fb-edit'] ) && $_GET['fb-edit'] == 1 ) {
+            if ( wp_doing_ajax() || isset( $_GET['fb-edit'] ) && 1 === absint( $_GET['fb-edit'] ) ) {
                 $html = $alm_data_generator;
             }
             return $html;
@@ -325,12 +338,17 @@ add_action( 'wp_footer', function () {
     }
     $ID = get_the_ID();
     $type = get_post_field( 'post_type', $ID );
+    $context = '';
     if ( is_front_page() || is_home() ) {
         $context = 'home';
-    } elseif ( is_single() && $type === 'post' ) {
+    } elseif ( is_single() && 'post' === $type ) {
         $context = 'post';
-    } elseif ( $type === 'page' ) {
+    } elseif ( 'page' === $type ) {
         $context = 'page';
+    }
+    // Early return if context is not set (not a supported type)
+    if ( empty( $context ) ) {
+        return;
     }
     $replacements = [
         'Site Name'        => get_bloginfo( 'name' ),
@@ -358,27 +376,17 @@ add_action( 'wp_footer', function () {
     // Decode for raw readable characters
     $alt_output = htmlspecialchars_decode( $alt_final, ENT_QUOTES );
     $title_output = htmlspecialchars_decode( $title_final, ENT_QUOTES );
-    ?>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const altText = <?php 
-    echo json_encode( $alt_output );
-    ?>;
-            const titleText = <?php 
-    echo json_encode( $title_output );
-    ?>;
-
-            document.querySelectorAll("img").forEach(function(img) {
-                if (altText.length > 0 &&
-                    (!img.hasAttribute("alt") || img.getAttribute("alt").trim() === "")) {
-                    img.setAttribute("alt", altText);
-                }
-                if (titleText.length > 0 &&
-                    (!img.hasAttribute("title") || img.getAttribute("title").trim() === "")) {
-                    img.setAttribute("title", titleText);
-                }
-            });
-        });
-    </script>
-<?php 
+    // Enqueue script properly
+    wp_enqueue_script(
+        'alm-frontend',
+        plugins_url( '/assets/js/alm-frontend.js', dirname( dirname( __FILE__ ) ) . '/alt-manager.php' ),
+        array(),
+        '1.0.0',
+        true
+    );
+    // Localize script with dynamic values
+    wp_localize_script( 'alm-frontend', 'almAltManager', array(
+        'altText'   => $alt_output,
+        'titleText' => $title_output,
+    ) );
 }, PHP_INT_MAX );
