@@ -101,7 +101,7 @@ With Image Alt Text Manager WordPress Plugin, you can easily generate alt text a
 == Upgrade to Pro ==
 Generate [product - custom post type] images alt and title and optimize WooCommerce galleries plus AI-powered generation.
 
-[Upgrade to Pro](https://wpsaad.com/product/image-alt-text-manager-wordpress-plugin-for-images-seo/)
+[Upgrade to Pro](https://wpsaad.com/wp-plugins/image-alt-text-manager-wordpress-plugin-for-images-seo/)
 
 **Need Help?**
 
@@ -110,11 +110,11 @@ Generate [product - custom post type] images alt and title and optimize WooComme
 * [YouTube Channel](https://www.youtube.com/@wpsaad)
 
 == More by WPSaad ==
-* [🚚 Shipping Manager for WooCommerce](https://wordpress.org/plugins/shipping-manager-for-woocommerce/) – [Pro Version](https://wpsaad.com/product/shipping-manager-for-woocommerce/)
-* [🧩 Custom Product Type for WooCommerce](https://wordpress.org/plugins/custom-product-type-for-woocommerce/) – [Pro Version](https://wpsaad.com/product/custom-product-type-for-woocommerce/)
-* [🧱 WPSaad Addons for Dokan and Elementor](https://wordpress.org/plugins/wpsaad-addons-for-dokan-and-elementor/) – [Pro Version](https://wpsaad.com/product/wpsaad-addons-for-dokan-and-elementor/)
-* [💲 Bulk Wholesale Dynamic Pricing Buttons](https://wordpress.org/plugins/bulk-wholesale-dynamic-pricing-buttons-for-woocommerce/) – [Pro Version](https://wpsaad.com/product/bulk-wholesale-dynamic-pricing-buttons-for-woocommerce/)
-* [⚙️ Product Add-Ons, Custom Fields, Booking & Extra Options](https://wordpress.org/plugins/product-add-ons-custom-fields-booking-extra-options-for-woocommerce/) – [Pro Version](https://wpsaad.com/product/product-add-ons-custom-fields-booking-extra-options-for-woocommerce/)
+* [🚚 Shipping Manager for WooCommerce](https://wordpress.org/plugins/shipping-manager-for-woocommerce/) – [Pro Version](https://wpsaad.com/wp-plugins/shipping-manager-for-woocommerce/)
+* [🧩 Custom Product Type for WooCommerce](https://wordpress.org/plugins/custom-product-type-for-woocommerce/) – [Pro Version](https://wpsaad.com/wp-plugins/custom-product-type-for-woocommerce/)
+* [🧱 WPSaad Addons for Dokan and Elementor](https://wordpress.org/plugins/wpsaad-addons-for-dokan-and-elementor/) – [Pro Version](https://wpsaad.com/wp-plugins/wpsaad-addons-for-dokan-and-elementor/)
+* [💲 Bulk Wholesale Dynamic Pricing Buttons](https://wordpress.org/plugins/bulk-wholesale-dynamic-pricing-buttons-for-woocommerce/) – [Pro Version](https://wpsaad.com/wp-plugins/bulk-wholesale-dynamic-pricing-buttons-for-woocommerce/)
+* [⚙️ Product Add-Ons, Custom Fields, Booking & Extra Options](https://wordpress.org/plugins/product-add-ons-custom-fields-booking-extra-options-for-woocommerce/) – [Pro Version](https://wpsaad.com/wp-plugins/product-add-ons-custom-fields-booking-extra-options-for-woocommerce/)
 
 == Other Services ==
 * [WordPress Design & Development Services](https://support.motkhases.com/%d8%a3%d9%81%d8%b6%d9%84-%d8%b4%d8%b1%d9%83%d8%a9-%d8%aa%d8%b5%d9%85%d9%8a%d9%85-%d9%85%d9%88%d8%a7%d9%82%d8%b9-%d9%81%d9%8a-%d9%85%d8%b5%d8%b1-%d9%88%d8%a7%d9%84%d9%88%d8%b7%d9%86-%d8%a7%d9%84%d8%b9/)
