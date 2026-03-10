@@ -10,7 +10,7 @@
  * Plugin Name: Image Alt Text Manager
  * plugin URI: https://wpsaad.com/alt-manager-wordpress-image-alt-text-plugin/
  * Description:Automatically bulk change images alt text to dynamic alt tags values related to content or media and also generate empty values for both alt and title tags.
- * Version: 1.8.2
+ * Version: 1.8.3
  * Author: WPSAAD
  * Author URI: https://wpsaad.com
  * License: GPLv2 or later
@@ -29,22 +29,23 @@ if ( function_exists( 'am_fs' ) ) {
                 // Include Freemius SDK.
                 require_once dirname( __FILE__ ) . '/freemius/start.php';
                 $am_fs = fs_dynamic_init( array(
-                    'id'             => '5548',
-                    'slug'           => 'alt-manager',
-                    'type'           => 'plugin',
-                    'navigation'     => 'tabs',
-                    'public_key'     => 'pk_07c4f76da780308f88546ce3da78a',
-                    'is_premium'     => false,
-                    'premium_suffix' => 'premium plan',
-                    'has_addons'     => false,
-                    'has_paid_plans' => true,
-                    'menu'           => array(
+                    'id'               => '5548',
+                    'slug'             => 'alt-manager',
+                    'type'             => 'plugin',
+                    'navigation'       => 'tabs',
+                    'public_key'       => 'pk_07c4f76da780308f88546ce3da78a',
+                    'is_premium'       => false,
+                    'premium_suffix'   => 'premium plan',
+                    'has_addons'       => false,
+                    'has_paid_plans'   => true,
+                    'menu'             => array(
                         'slug'   => 'alt-manager',
                         'parent' => array(
                             'slug' => 'options-general.php',
                         ),
                     ),
-                    'is_live'        => true,
+                    'is_live'          => true,
+                    'is_org_compliant' => true,
                 ) );
             }
             return $am_fs;
