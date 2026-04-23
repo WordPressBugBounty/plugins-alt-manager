@@ -103,7 +103,8 @@ class alm_dom_generator {
                 // Usually the main one
             }
         }
-        if ( is_singular( $types ) && !is_admin() && !empty( $alm_data_generator ) ) {
+        //Removed is_singular($types) to support elemntor template integeration
+        if ( !is_admin() && !empty( $alm_data_generator ) ) {
             foreach ( $html->find( 'img' ) as $img ) {
                 $attachments_ids = $this->alm_posts_attachments_ids();
                 $attachment_id = $this->alm_get_image_id( $img->getAttribute( 'src' ) );
@@ -167,14 +168,14 @@ class alm_dom_generator {
                     }
                     /*Set logo Image Alt and Title*/
                     if ( $logo_checker ) {
-                        $alt = $options['Site Name'];
-                        $title = $options['Site Name'];
+                        $alt = $options['Site Name'] . ' | ' . $options['Site Description'];
+                        $title = $options['Site Name'] . ' | ' . $options['Site Description'];
                         $img->setAttribute( 'alt', esc_attr( $alt ) );
                         $img->setAttribute( 'title', esc_attr( $title ) );
                     }
                     if ( !$logo_checker ) {
                         //check page type
-                        if ( is_singular( $types ) || is_archive() || !is_front_page() && is_home() && !is_admin() && !empty( $alm_data_generator ) ) {
+                        if ( get_post_field( 'post_type', $ID ) == 'page' && is_singular( 'page' ) || !is_front_page() && is_home() && !is_admin() && !empty( $alm_data_generator ) ) {
                             $alt = '';
                             $title = '';
                             //page images alt
@@ -271,7 +272,7 @@ class alm_dom_generator {
                             }
                         }
                         //check post type
-                        if ( is_single( $ID ) || (is_tax() || is_category() || is_tag()) && 'post' === $type ) {
+                        if ( is_single( $ID ) || (is_tax() || is_archive() || is_category() || is_tag()) || get_post_field( 'post_type', $ID ) == 'post' ) {
                             $alt = '';
                             $title = '';
                             //post images alt
@@ -381,7 +382,7 @@ function alm_enqueue_frontend_script() {
         'alm-frontend',
         plugins_url( '/assets/js/alm-frontend.js', dirname( dirname( __FILE__ ) ) . '/alt-manager.php' ),
         array(),
-        '1.0.0',
+        '1.8.3',
         true
     );
     // Localize script with dynamic values
