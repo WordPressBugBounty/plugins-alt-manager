@@ -138,8 +138,8 @@ class alm_dom_generator {
                     }
                 }
                 // Check if image already has alt/title set by alm-functions.php - skip if already set
-                $has_alt = $img->hasAttribute( 'alt' ) && !empty( trim( $img->getAttribute( 'alt' ) ) );
-                $has_title = $img->hasAttribute( 'title' ) && !empty( trim( $img->getAttribute( 'title' ) ) );
+                $has_alt = $img->hasAttribute( 'alt' ) && !empty( trim( $img->getAttribute( 'alt' ) ) ) && 'enabled' === $generate_empty_alt;
+                $has_title = $img->hasAttribute( 'title' ) && !empty( trim( $img->getAttribute( 'title' ) ) ) && 'enabled' === $generate_empty_alt;
                 //Check if image is not featured and has no alt
                 // Skip if already processed by alm-functions.php (has both alt and title)
                 if ( !$is_featured && $img->getAttribute( 'class' ) !== 'wpml-ls-flag' && !($has_alt && $has_title) ) {
@@ -380,9 +380,10 @@ function alm_enqueue_frontend_script() {
     // Enqueue script properly
     wp_enqueue_script(
         'alm-frontend',
-        plugins_url( '/assets/js/alm-frontend.js', dirname( dirname( __FILE__ ) ) . '/alt-manager.php' ),
+        plugins_url( '/assets/js/alm-frontend.js', dirname( __FILE__, 2 ) . '/alt-manager.php' ),
         array(),
-        '1.8.3',
+        filemtime( plugin_dir_path( __FILE__ ) . '../assets/js/alm-frontend.js' ),
+        // Dynamic versioning
         true
     );
     // Localize script with dynamic values

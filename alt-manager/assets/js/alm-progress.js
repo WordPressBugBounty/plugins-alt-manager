@@ -18,7 +18,7 @@ jQuery(document).ready(function ($) {
 
     function processBatch() {
         $.ajax({
-            url: ajaxurl, // WordPress AJAX URL
+            url: almProgress.ajaxurl, // Plugin-localized WordPress AJAX URL
             method: 'POST',
             data: {
                 action: 'alm_generate_ai_images',

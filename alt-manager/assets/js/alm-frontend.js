@@ -6,18 +6,28 @@
             const altText = almAltManager.altText || '';
             const titleText = almAltManager.titleText || '';
 
-            if (altText.length > 0 || titleText.length > 0) {
-                document.querySelectorAll("img").forEach(function(img) {
-                    if (altText.length > 0 &&
-                        (!img.hasAttribute("alt") || img.getAttribute("alt").trim() === "")) {
-                        img.setAttribute("alt", altText);
-                    }
-                    if (titleText.length > 0 &&
-                        (!img.hasAttribute("title") || img.getAttribute("title").trim() === "")) {
-                        img.setAttribute("title", titleText);
-                    }
-                });
-            }
+            // FORCE only-empty behavior: always only set attributes when missing/empty.
+            document.querySelectorAll('img').forEach(function(img) {
+                // Skip featured images, WPML flags, and logos
+                const classes = img.className || '';
+                if (classes.includes('wp-post-image') || classes.includes('wpml-ls-flag') || classes.includes('logo') || (img.src && img.src.includes('logo'))) {
+                    return;
+                }
+
+                // Alt: set only when altText provided AND current alt is missing/empty
+                const currentAlt = img.getAttribute('alt');
+                const altIsEmpty = !currentAlt || currentAlt.trim() === '';
+                if (altText && altIsEmpty) {
+                    img.setAttribute('alt', altText);
+                }
+
+                // Title: set only when titleText provided AND current title is missing/empty
+                const currentTitle = img.getAttribute('title');
+                const titleIsEmpty = !currentTitle || currentTitle.trim() === '';
+                if (titleText && titleIsEmpty) {
+                    img.setAttribute('title', titleText);
+                }
+            });
         }
     });
 })();
