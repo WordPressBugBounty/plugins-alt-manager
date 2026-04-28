@@ -25,17 +25,20 @@ if ( !function_exists( 'alm_image_attributes' ) ) {
     function alm_image_attributes(  $attr, $attachment  ) {
         // Get post parent
         $parent = get_post_field( 'post_parent', $attachment );
+        $page_id = get_queried_object_id();
+        if ( empty( $page_id ) ) {
+            $page_id = get_the_ID();
+        }
+        $context_id = ( !empty( $parent ) ? absint( $parent ) : absint( $page_id ) );
         // Get post type
-        $type = get_post_field( 'post_type', $parent );
-        //Get page or post ID
-        $ID = get_the_ID();
+        $type = get_post_field( 'post_type', $context_id );
         // options
         $options = [
             'Site Name'        => sanitize_text_field( get_bloginfo( 'name' ) ),
             'Site Description' => sanitize_text_field( get_bloginfo( 'description' ) ),
-            'Page Title'       => sanitize_text_field( get_the_title( $ID ) ),
-            'Post Title'       => sanitize_text_field( get_post_field( 'post_title', $ID ) ),
-            'Product Title'    => sanitize_text_field( get_post_field( 'post_title', $ID ) ),
+            'Page Title'       => sanitize_text_field( get_the_title( $context_id ) ),
+            'Post Title'       => sanitize_text_field( get_post_field( 'post_title', $context_id ) ),
+            'Product Title'    => sanitize_text_field( get_post_field( 'post_title', $context_id ) ),
         ];
         //wp image attachment data
         if ( wp_attachment_is_image( $attachment->ID ) ) {
@@ -60,7 +63,7 @@ if ( !function_exists( 'alm_image_attributes' ) ) {
         }
         if ( !$logo_checker ) {
             //check page type
-            if ( is_page( $ID ) ) {
+            if ( empty( $parent ) && is_page( $page_id ) ) {
                 $alt = '';
                 $title = '';
                 //Page Images Alt
@@ -105,7 +108,7 @@ if ( !function_exists( 'alm_image_attributes' ) ) {
                 }
             }
             //check homepage
-            if ( is_front_page( $ID ) ) {
+            if ( empty( $parent ) && is_front_page() ) {
                 $alt = '';
                 $title = '';
                 //Homepage Images Alt
@@ -149,7 +152,7 @@ if ( !function_exists( 'alm_image_attributes' ) ) {
                 }
             }
             //check post type
-            if ( is_single( $ID ) && 'post' === $type ) {
+            if ( 'post' === $type && (!empty( $parent ) || is_single( $page_id ) || is_singular( 'post' )) ) {
                 $alt = '';
                 $title = '';
                 //Posts Images Alt

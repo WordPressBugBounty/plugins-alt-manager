@@ -59,6 +59,156 @@ class alm_dom_generator {
         return $attachment_id;
     }
 
+    function alm_build_value( $setting_key, $options ) {
+        $configured = alm_get_option( $setting_key );
+        if ( empty( $configured ) ) {
+            return '';
+        }
+        if ( !is_array( $configured ) ) {
+            return ( isset( $options[$configured] ) ? $options[$configured] : '' );
+        }
+        $value = '';
+        foreach ( $configured as $option ) {
+            if ( array_key_exists( $option, $options ) ) {
+                $value .= $options[$option];
+            } else {
+                $value .= ' ' . $option . ' ';
+            }
+        }
+        return $value;
+    }
+
+    function alm_set_img_attribute(
+        $img,
+        $attribute,
+        $value,
+        $only_empty_setting
+    ) {
+        $current_value = $img->getAttribute( $attribute );
+        if ( 'enabled' === $only_empty_setting ) {
+            if ( empty( $current_value ) ) {
+                $img->setAttribute( $attribute, esc_attr( $value ) );
+            } else {
+                $img->setAttribute( $attribute, esc_attr( $current_value ) );
+            }
+            return;
+        }
+        $img->setAttribute( $attribute, esc_attr( $value ) );
+    }
+
+    function alm_resolve_image_context( $img, $fallback_id, $fallback_type ) {
+        $resolved_id = absint( $fallback_id );
+        $resolved_type = $fallback_type;
+        $source = 'base';
+        $matched_tag = '';
+        $matched_class = '';
+        $node = $img;
+        while ( $node ) {
+            $class_string = (string) $node->getAttribute( 'class' );
+            $id_string = (string) $node->getAttribute( 'id' );
+            $data_post_id = absint( $node->getAttribute( 'data-post-id' ) );
+            if ( $data_post_id > 0 && get_post_status( $data_post_id ) ) {
+                $resolved_id = $data_post_id;
+                $resolved_type = get_post_field( 'post_type', $resolved_id );
+                $source = 'data-post-id';
+                $matched_tag = $node->tag;
+                $matched_class = $class_string;
+                break;
+            }
+            if ( preg_match( '/(?:^|\\s)(?:post|postid)-(\\d+)(?:\\s|$)/', $class_string, $matches ) || preg_match( '/^post-(\\d+)$/', $id_string, $matches ) ) {
+                $resolved_id = absint( $matches[1] );
+                $resolved_type = get_post_field( 'post_type', $resolved_id );
+                $source = 'post-class';
+                $matched_tag = $node->tag;
+                $matched_class = $class_string;
+                break;
+            }
+            if ( 'a' === $node->tag ) {
+                $linked_post_id = url_to_postid( (string) $node->getAttribute( 'href' ) );
+                if ( $linked_post_id > 0 ) {
+                    $resolved_id = absint( $linked_post_id );
+                    $resolved_type = get_post_field( 'post_type', $resolved_id );
+                    $source = 'link';
+                    $matched_tag = $node->tag;
+                    $matched_class = $class_string;
+                    break;
+                }
+            }
+            $node = $node->parent();
+        }
+        return [
+            'id'     => $resolved_id,
+            'type'   => $resolved_type,
+            'source' => $source,
+            'tag'    => $matched_tag,
+            'class'  => $matched_class,
+        ];
+    }
+
+    function alm_apply_context_attributes(
+        $img,
+        $context,
+        $options,
+        $generate_empty_alt,
+        $generate_empty_title
+    ) {
+        $context_map = [
+            'page'    => [
+                'alt'   => 'pages_images_alt',
+                'title' => 'pages_images_title',
+            ],
+            'home'    => [
+                'alt'   => 'home_images_alt',
+                'title' => 'home_images_title',
+            ],
+            'post'    => [
+                'alt'   => 'post_images_alt',
+                'title' => 'post_images_title',
+            ],
+            'product' => [
+                'alt'   => 'product_images_alt',
+                'title' => 'product_images_title',
+            ],
+            'cpt'     => [
+                'alt'   => 'cpt_images_alt',
+                'title' => 'cpt_images_title',
+            ],
+        ];
+        if ( !isset( $context_map[$context] ) ) {
+            return;
+        }
+        if ( 'home' === $context && 'page' !== alm_get_option( 'show_on_front' ) && !empty( alm_get_option( 'show_on_front' ) ) ) {
+            $home_value = $options['Site Name'];
+            $this->alm_set_img_attribute(
+                $img,
+                'alt',
+                $home_value,
+                $generate_empty_alt
+            );
+            $this->alm_set_img_attribute(
+                $img,
+                'title',
+                $home_value,
+                $generate_empty_title
+            );
+            return;
+        }
+        $alt = $this->alm_build_value( $context_map[$context]['alt'], $options );
+        $title = $this->alm_build_value( $context_map[$context]['title'], $options );
+        $this->alm_set_img_attribute(
+            $img,
+            'alt',
+            $alt,
+            $generate_empty_alt
+        );
+        $this->alm_set_img_attribute(
+            $img,
+            'title',
+            $title,
+            $generate_empty_title
+        );
+    }
+
     function alm_init() {
         if ( is_admin() ) {
             return;
@@ -74,8 +224,12 @@ class alm_dom_generator {
         $html = str_get_html( $alm_data_generator );
         $generate_empty_alt = alm_get_option( 'only_empty_images_alt' );
         $generate_empty_title = alm_get_option( 'only_empty_images_title' );
-        $ID = get_the_ID();
-        $type = get_post_field( 'post_type', $ID );
+        $page_id = get_queried_object_id();
+        if ( empty( $page_id ) ) {
+            $page_id = get_the_ID();
+        }
+        $page_id = absint( $page_id );
+        $page_type = ( $page_id ? get_post_field( 'post_type', $page_id ) : '' );
         $post_types = get_post_types();
         $types = [];
         foreach ( $post_types as $t => $value ) {
@@ -99,35 +253,19 @@ class alm_dom_generator {
             $taxonomy_object = get_taxonomy( $taxonomy );
             if ( !empty( $taxonomy_object->object_type ) ) {
                 // object_type can be an array of post types
-                $type = $taxonomy_object->object_type[0];
+                $page_type = $taxonomy_object->object_type[0];
                 // Usually the main one
             }
         }
         //Removed is_singular($types) to support elemntor template integeration
         if ( !is_admin() && !empty( $alm_data_generator ) ) {
             foreach ( $html->find( 'img' ) as $img ) {
-                $attachments_ids = $this->alm_posts_attachments_ids();
                 $attachment_id = $this->alm_get_image_id( $img->getAttribute( 'src' ) );
                 $img_classes = explode( ' ', $img->getAttribute( 'class' ) );
-                // Store original page ID for homepage checks
-                $original_page_id = $ID;
-                $extracted_post_type = $type;
-                // Default to original type
-                // Try to find parent <article> of the image if is archive wtih articles
-                $parent_article = $img->parent();
-                while ( $parent_article && $parent_article->tag !== 'article' ) {
-                    $parent_article = $parent_article->parent();
-                }
-                if ( $parent_article ) {
-                    $class_string = $parent_article->getAttribute( 'class' );
-                    if ( preg_match( '/post-(\\d+)/', $class_string, $matches ) ) {
-                        $extracted_id = intval( $matches[1] );
-                        $extracted_post_type = get_post_field( 'post_type', $extracted_id );
-                        // Update $ID for type checks, but keep original_page_id for homepage checks
-                        $ID = $extracted_id;
-                        // Now $ID is the ID from the parent article class like 'post-3756'
-                    }
-                }
+                $resolved_context = $this->alm_resolve_image_context( $img, $page_id, $page_type );
+                $resolved_id = $resolved_context['id'];
+                $resolved_type = $resolved_context['type'];
+                $is_loop_item = $resolved_id > 0 && $resolved_id !== $page_id;
                 // Only check if image is featured by class
                 $is_featured = in_array( 'wp-post-image', $img_classes );
                 //WPML Compatibility Custom Alt
@@ -139,7 +277,7 @@ class alm_dom_generator {
                 }
                 // Check if image already has alt/title set by alm-functions.php - skip if already set
                 $has_alt = $img->hasAttribute( 'alt' ) && !empty( trim( $img->getAttribute( 'alt' ) ) ) && 'enabled' === $generate_empty_alt;
-                $has_title = $img->hasAttribute( 'title' ) && !empty( trim( $img->getAttribute( 'title' ) ) ) && 'enabled' === $generate_empty_alt;
+                $has_title = $img->hasAttribute( 'title' ) && !empty( trim( $img->getAttribute( 'title' ) ) ) && 'enabled' === $generate_empty_title;
                 //Check if image is not featured and has no alt
                 // Skip if already processed by alm-functions.php (has both alt and title)
                 if ( !$is_featured && $img->getAttribute( 'class' ) !== 'wpml-ls-flag' && !($has_alt && $has_title) ) {
@@ -147,9 +285,9 @@ class alm_dom_generator {
                     $options = [
                         'Site Name'        => sanitize_text_field( get_bloginfo( 'name' ) ),
                         'Site Description' => sanitize_text_field( get_bloginfo( 'description' ) ),
-                        'Page Title'       => sanitize_text_field( get_the_title( $ID ) ),
-                        'Post Title'       => sanitize_text_field( get_post_field( 'post_title', $ID ) ),
-                        'Product Title'    => sanitize_text_field( get_post_field( 'post_title', $ID ) ),
+                        'Page Title'       => sanitize_text_field( get_the_title( $resolved_id ) ),
+                        'Post Title'       => sanitize_text_field( get_post_field( 'post_title', $resolved_id ) ),
+                        'Product Title'    => sanitize_text_field( get_post_field( 'post_title', $resolved_id ) ),
                     ];
                     //wp image attachment data
                     if ( wp_attachment_is_image( $attachment_id ) ) {
@@ -174,147 +312,59 @@ class alm_dom_generator {
                         $img->setAttribute( 'title', esc_attr( $title ) );
                     }
                     if ( !$logo_checker ) {
-                        //check page type
-                        if ( get_post_field( 'post_type', $ID ) == 'page' && is_singular( 'page' ) || !is_front_page() && is_home() && !is_admin() && !empty( $alm_data_generator ) ) {
-                            $alt = '';
-                            $title = '';
-                            //page images alt
-                            if ( !empty( alm_get_option( 'pages_images_alt' ) ) && is_array( alm_get_option( 'pages_images_alt' ) ) ) {
-                                foreach ( alm_get_option( 'pages_images_alt' ) as $option ) {
-                                    if ( array_key_exists( $option, $options ) ) {
-                                        $alt .= $options[$option];
-                                    } else {
-                                        $alt .= ' ' . $option . ' ';
-                                    }
-                                }
-                            } elseif ( !empty( alm_get_option( 'pages_images_alt' ) ) && !is_array( alm_get_option( 'pages_images_alt' ) ) ) {
-                                $alt = $options[alm_get_option( 'pages_images_alt' )];
+                        $context = '';
+                        if ( $is_loop_item ) {
+                            if ( 'product' === $resolved_type ) {
+                                $context = 'product';
+                            } elseif ( 'post' === $resolved_type ) {
+                                $context = 'post';
+                            } elseif ( 'page' === $resolved_type ) {
+                                $context = 'page';
+                            } elseif ( !empty( $resolved_type ) && !in_array( $resolved_type, [
+                                'product',
+                                'post',
+                                'page',
+                                'attachment'
+                            ], true ) ) {
+                                $context = 'cpt';
                             }
-                            //Empty alt option
-                            if ( 'enabled' === $generate_empty_alt && empty( $img->getAttribute( 'alt' ) ) ) {
-                                $img->setAttribute( 'alt', esc_attr( $alt ) );
-                            } elseif ( 'enabled' === $generate_empty_alt && !empty( $img->getAttribute( 'alt' ) ) ) {
-                                $img->setAttribute( 'alt', esc_attr( $img->getAttribute( 'alt' ) ) );
-                            } else {
-                                $img->setAttribute( 'alt', esc_attr( $alt ) );
-                            }
-                            //page images title
-                            if ( !empty( alm_get_option( 'pages_images_title' ) ) && is_array( alm_get_option( 'pages_images_title' ) ) ) {
-                                foreach ( alm_get_option( 'pages_images_title' ) as $option ) {
-                                    if ( array_key_exists( $option, $options ) ) {
-                                        $title .= $options[$option];
-                                    } else {
-                                        $title .= ' ' . $option . ' ';
-                                    }
-                                }
-                            } elseif ( !empty( alm_get_option( 'pages_images_title' ) ) && !is_array( alm_get_option( 'pages_images_title' ) ) ) {
-                                $title = $options[alm_get_option( 'pages_images_title' )];
-                            }
-                            //Empty title option
-                            if ( 'enabled' === $generate_empty_title && empty( $img->getAttribute( 'title' ) ) ) {
-                                $img->setAttribute( 'title', esc_attr( $title ) );
-                            } elseif ( 'enabled' === $generate_empty_title && !empty( $img->getAttribute( 'title' ) ) ) {
-                                $img->setAttribute( 'title', esc_attr( $img->getAttribute( 'title' ) ) );
-                            } else {
-                                $img->setAttribute( 'title', esc_attr( $title ) );
+                        } else {
+                            if ( is_singular( 'page' ) || !is_front_page() && is_home() && !is_admin() && !empty( $alm_data_generator ) && 'page' === $resolved_type ) {
+                                $context = 'page';
+                            } elseif ( (is_home() || is_front_page()) && 'product' !== $resolved_type ) {
+                                $context = 'home';
+                            } elseif ( 'post' === $resolved_type && (is_single( $page_id ) || is_singular( 'post' )) ) {
+                                $context = 'post';
+                            } elseif ( am_fs()->is__premium_only() && 'product' === $resolved_type ) {
+                                $context = 'product';
+                            } elseif ( am_fs()->is__premium_only() && !empty( $resolved_type ) && !in_array( $resolved_type, [
+                                'product',
+                                'post',
+                                'page',
+                                'attachment'
+                            ], true ) ) {
+                                $context = 'cpt';
                             }
                         }
-                        //check homepage - use original page ID, not extracted product ID
-                        // Also skip if this is a product image (products should use product settings, not homepage)
-                        if ( (is_home() || is_front_page()) && $extracted_post_type != 'product' ) {
-                            //check if post for pages only
-                            $alt = '';
-                            $title = '';
-                            if ( 'page' !== alm_get_option( 'show_on_front' ) && !empty( alm_get_option( 'show_on_front' ) ) ) {
-                                $img->setAttribute( 'alt', esc_attr( $options['Site Name'] ) );
-                                $img->setAttribute( 'title', esc_attr( $options['Site Name'] ) );
-                            } else {
-                                //Homepage images alt
-                                if ( !empty( alm_get_option( 'home_images_alt' ) ) && is_array( alm_get_option( 'home_images_alt' ) ) ) {
-                                    foreach ( alm_get_option( 'home_images_alt' ) as $option ) {
-                                        if ( array_key_exists( $option, $options ) ) {
-                                            $alt .= $options[$option];
-                                        } else {
-                                            $alt .= ' ' . $option . ' ';
-                                        }
-                                    }
-                                } elseif ( !empty( alm_get_option( 'home_images_alt' ) ) && !is_array( alm_get_option( 'home_images_alt' ) ) ) {
-                                    $alt = $options[alm_get_option( 'home_images_alt' )];
-                                }
-                                //Empty alt option
-                                if ( 'enabled' === $generate_empty_alt && empty( $img->getAttribute( 'alt' ) ) ) {
-                                    $img->setAttribute( 'alt', esc_attr( $alt ) );
-                                } elseif ( 'enabled' === $generate_empty_alt && !empty( $img->getAttribute( 'alt' ) ) ) {
-                                    $img->setAttribute( 'alt', esc_attr( $img->getAttribute( 'alt' ) ) );
-                                } else {
-                                    $img->setAttribute( 'alt', esc_attr( $alt ) );
-                                }
-                                //Homepage images title
-                                if ( !empty( alm_get_option( 'home_images_title' ) ) && is_array( alm_get_option( 'home_images_title' ) ) ) {
-                                    foreach ( alm_get_option( 'home_images_title' ) as $option ) {
-                                        if ( array_key_exists( $option, $options ) ) {
-                                            $title .= $options[$option];
-                                        } else {
-                                            $title .= ' ' . $option . ' ';
-                                        }
-                                    }
-                                } elseif ( !empty( alm_get_option( 'home_images_title' ) ) && !is_array( alm_get_option( 'home_images_title' ) ) ) {
-                                    $title = $options[alm_get_option( 'home_images_title' )];
-                                }
-                                //Empty title option
-                                if ( 'enabled' === $generate_empty_title && empty( $img->getAttribute( 'title' ) ) ) {
-                                    $img->setAttribute( 'title', esc_attr( $title ) );
-                                } elseif ( 'enabled' === $generate_empty_title && !empty( $img->getAttribute( 'title' ) ) ) {
-                                    $img->setAttribute( 'title', esc_attr( $img->getAttribute( 'title' ) ) );
-                                } else {
-                                    $img->setAttribute( 'title', esc_attr( $title ) );
-                                }
-                            }
+                        if ( !empty( $context ) ) {
+                            $this->alm_apply_context_attributes(
+                                $img,
+                                $context,
+                                $options,
+                                $generate_empty_alt,
+                                $generate_empty_title
+                            );
                         }
-                        //check post type
-                        if ( is_single( $ID ) || (is_tax() || is_archive() || is_category() || is_tag()) || get_post_field( 'post_type', $ID ) == 'post' ) {
-                            $alt = '';
-                            $title = '';
-                            //post images alt
-                            if ( !empty( alm_get_option( 'post_images_alt' ) ) && is_array( alm_get_option( 'post_images_alt' ) ) ) {
-                                foreach ( alm_get_option( 'post_images_alt' ) as $option ) {
-                                    if ( array_key_exists( $option, $options ) ) {
-                                        $alt .= $options[$option];
-                                    } else {
-                                        $alt .= ' ' . $option . ' ';
-                                    }
-                                }
-                            } elseif ( !empty( alm_get_option( 'post_images_alt' ) ) && !is_array( alm_get_option( 'post_images_alt' ) ) ) {
-                                $alt = $options[alm_get_option( 'post_images_alt' )];
-                            }
-                            //Empty alt option
-                            if ( 'enabled' === $generate_empty_alt && empty( $img->getAttribute( 'alt' ) ) ) {
-                                $img->setAttribute( 'alt', esc_attr( $alt ) );
-                            } elseif ( 'enabled' === $generate_empty_alt && !empty( $img->getAttribute( 'alt' ) ) ) {
-                                $img->setAttribute( 'alt', esc_attr( $img->getAttribute( 'alt' ) ) );
-                            } else {
-                                $img->setAttribute( 'alt', esc_attr( $alt ) );
-                            }
-                            //post images title
-                            if ( !empty( alm_get_option( 'post_images_title' ) ) && is_array( alm_get_option( 'post_images_title' ) ) ) {
-                                foreach ( alm_get_option( 'post_images_title' ) as $option ) {
-                                    if ( array_key_exists( $option, $options ) ) {
-                                        $title .= $options[$option];
-                                    } else {
-                                        $title .= ' ' . $option . ' ';
-                                    }
-                                }
-                            } elseif ( !empty( alm_get_option( 'post_images_title' ) ) && !is_array( alm_get_option( 'post_images_title' ) ) ) {
-                                $title = $options[alm_get_option( 'post_images_title' )];
-                            }
-                            //Empty title option
-                            if ( 'enabled' === $generate_empty_title && empty( $img->getAttribute( 'title' ) ) ) {
-                                $img->setAttribute( 'title', esc_attr( $title ) );
-                            } elseif ( 'enabled' === $generate_empty_title && !empty( $img->getAttribute( 'title' ) ) ) {
-                                $img->setAttribute( 'title', esc_attr( $img->getAttribute( 'title' ) ) );
-                            } else {
-                                $img->setAttribute( 'title', esc_attr( $title ) );
-                            }
+                        $alm_debug = current_user_can( 'manage_options' ) && isset( $_GET['alm_debug'] );
+                        if ( $alm_debug ) {
+                            $img->setAttribute( 'data-alm-page-id', (string) $page_id );
+                            $img->setAttribute( 'data-alm-resolved-id', (string) $resolved_id );
+                            $img->setAttribute( 'data-alm-resolved-type', (string) $resolved_type );
+                            $img->setAttribute( 'data-alm-context', (string) $context );
+                            $img->setAttribute( 'data-alm-source', $resolved_context['source'] );
+                            $img->setAttribute( 'data-alm-parent-tag', $resolved_context['tag'] );
+                            $img->setAttribute( 'data-alm-parent-class', sanitize_text_field( $resolved_context['class'] ) );
+                            $img->setAttribute( 'data-alm-post-title', sanitize_text_field( get_the_title( $resolved_id ) ) );
                         }
                     }
                 }
@@ -337,14 +387,20 @@ function alm_enqueue_frontend_script() {
     if ( is_admin() ) {
         return;
     }
-    $ID = get_the_ID();
+    if ( is_home() || is_archive() || is_tax() || is_category() || is_tag() || is_author() || is_search() ) {
+        return;
+    }
+    $ID = get_queried_object_id();
+    if ( empty( $ID ) ) {
+        $ID = get_the_ID();
+    }
     $type = get_post_field( 'post_type', $ID );
     $context = '';
-    if ( is_front_page() || is_home() ) {
+    if ( is_front_page() ) {
         $context = 'home';
     } elseif ( is_single() && 'post' === $type ) {
         $context = 'post';
-    } elseif ( 'page' === $type ) {
+    } elseif ( is_page() && 'page' === $type ) {
         $context = 'page';
     }
     // Early return if context is not set (not a supported type)
@@ -390,6 +446,7 @@ function alm_enqueue_frontend_script() {
     wp_localize_script( 'alm-frontend', 'almAltManager', array(
         'altText'   => $alt_output,
         'titleText' => $title_output,
+        'context'   => $context,
     ) );
 }
 
