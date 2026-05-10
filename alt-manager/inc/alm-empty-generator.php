@@ -177,6 +177,10 @@ class alm_dom_generator {
         if ( !isset( $context_map[$context] ) ) {
             return;
         }
+        // Premium-only contexts must never run in the free version.
+        if ( in_array( $context, ['product', 'cpt'], true ) && !am_fs()->is__premium_only() ) {
+            return;
+        }
         if ( 'home' === $context && 'page' !== alm_get_option( 'show_on_front' ) && !empty( alm_get_option( 'show_on_front' ) ) ) {
             $home_value = $options['Site Name'];
             $this->alm_set_img_attribute(
@@ -314,13 +318,13 @@ class alm_dom_generator {
                     if ( !$logo_checker ) {
                         $context = '';
                         if ( $is_loop_item ) {
-                            if ( 'product' === $resolved_type ) {
-                                $context = 'product';
-                            } elseif ( 'post' === $resolved_type ) {
+                            if ( 'post' === $resolved_type ) {
                                 $context = 'post';
                             } elseif ( 'page' === $resolved_type ) {
                                 $context = 'page';
-                            } elseif ( !empty( $resolved_type ) && !in_array( $resolved_type, [
+                            } elseif ( am_fs()->is__premium_only() && 'product' === $resolved_type ) {
+                                $context = 'product';
+                            } elseif ( am_fs()->is__premium_only() && !empty( $resolved_type ) && !in_array( $resolved_type, [
                                 'product',
                                 'post',
                                 'page',
