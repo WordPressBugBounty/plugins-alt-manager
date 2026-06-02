@@ -198,7 +198,7 @@ function alm_settings_admin() {
     <div class="wrap fs-section">
         <h2 class="nav-tab-wrapper">
             <a href="<?php 
-    echo esc_url( add_query_arg( 'page', 'alt-manager' ) );
+    echo esc_url( admin_url( 'options-general.php?page=alt-manager' ) );
     ?>" class="home <?php 
     echo esc_attr( ( '' === $active_tab ? 'nav-tab-active' : '' ) );
     ?> nav-tab">Settings</a>
