@@ -10,7 +10,7 @@
  * Plugin Name: Image Alt Text Manager
  * plugin URI: https://wpsaad.com/alt-manager-wordpress-image-alt-text-plugin/
  * Description:Automatically bulk change images alt text to dynamic alt tags values related to content or media and also generate empty values for both alt and title tags.
- * Version: 1.9.4
+ * Version: 1.9.5
  * Author: WPSAAD
  * Author URI: https://wpsaad.com
  * License: GPLv2 or later
@@ -133,8 +133,12 @@ if ( function_exists( 'am_fs' ) ) {
     function alm_load() {
         require_once plugin_dir_path( __FILE__ ) . 'inc/alm-functions.php';
         require_once plugin_dir_path( __FILE__ ) . 'inc/alm-empty-generator.php';
-        if ( user_can( get_current_user_id(), 'manage_options' ) ) {
-            include_once plugin_dir_path( __FILE__ ) . 'inc/alm-admin.php';
+        if ( is_admin() ) {
+            // Always load settings registration in admin context so admin_init hooks run for all admin requests
+            include_once plugin_dir_path( __FILE__ ) . 'inc/alm-settings.php';
+            if ( user_can( get_current_user_id(), 'manage_options' ) ) {
+                include_once plugin_dir_path( __FILE__ ) . 'inc/alm-admin.php';
+            }
         }
         if ( !function_exists( 'file_get_html' ) ) {
             require_once plugin_dir_path( __FILE__ ) . 'inc/simple_html_dom.php';
@@ -161,7 +165,6 @@ if ( function_exists( 'am_fs' ) ) {
             $activate_reset->reset();
         }
         if ( user_can( get_current_user_id(), 'manage_options' ) ) {
-            include_once plugin_dir_path( __FILE__ ) . 'inc/alm-settings.php';
             if ( function_exists( 'am_fs' ) && am_fs()->is__premium_only() ) {
                 //AI Generator Action
                 include_once plugin_dir_path( __FILE__ ) . 'inc/ai-generator__premium_only.php';

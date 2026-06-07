@@ -24,7 +24,12 @@ if ( !function_exists( 'alm_image_attributes' ) ) {
      */
     function alm_image_attributes(  $attr, $attachment  ) {
         // Get post parent
-        $parent = get_post_field( 'post_parent', $attachment );
+        // $parent = get_post_field('post_parent', $attachment->ID);
+        $parent = wp_get_post_parent_id( $attachment->ID );
+        // If no parent or more than one parent, use current page ID as its context
+        if ( $parent == 0 ) {
+            $parent = get_the_ID();
+        }
         $page_id = get_queried_object_id();
         if ( empty( $page_id ) ) {
             $page_id = get_the_ID();

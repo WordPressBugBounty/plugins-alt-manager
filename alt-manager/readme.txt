@@ -4,7 +4,7 @@ Tags: alt text, image alt, images seo, image alt text, ai
 Requires at least: 2.8.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.9.4
+Stable tag: 1.9.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -14,6 +14,8 @@ Automatically bulk change images alt text to dynamic alt tags values related to 
 https://www.youtube.com/watch?v=FyR9kdrL-ck
 
 Image Alt Text Manager automatically and dynamically bulk change WordPress images alt text and also generate empty values on your (Homepage - Pages - Posts - Blog) **[Free Version]** (Products - Shop page - Custom Post Type - Custom Post Type archive page) **[Premium Version]** separately to several dynamic related values. Additionally, the **AI Generation Feature** in the premium version allows you to generate context-aware alt text using artificial intelligence powered by the ChatGPT API. This plugin is a full solution for generating alt and title values.
+
+The plugin also supports the WordPress AI Connectors system. When Connectors are enabled you can select a connected provider under Settings → Connectors to perform AI generation; if no connectors are connected the plugin will fall back to its built-in OpenAI integration when available **[Premium Version]**.
 
 **Why Images SEO performance on search engines?**
 
@@ -142,18 +144,21 @@ Just install and activate the plugin then enjoy the simple settings on WordPress
 3. AI Images Alt & Title Tab
 
 == Changelog ==
+= 1.9.5 =
+* Added Default WP AI Connectors Integeration
 = 1.9.4 =
 * Admin Performance Optomization *
 * Fixed Setting Tab *
+* Improved Attachment Parent Detection *
 = 1.9.0 =
-* Extended empty images detection 
+* Extended empty images detection
 * Extended images detection in templates
 = 1.8.2 =
 * Code quality improvements.
 * Fixed JavaScript enqueue.
 * Performance optimizations.
 = 1.8.1 =
-* Fixed $context 
+* Fixed $context
 = 1.7.7 =
 * Improved Archive Generation.
 * Optimized Empty Generations.
